@@ -30,8 +30,19 @@
                             <span class="lot__amount">Стартовая цена</span>
                             <span class="lot__cost"><?= price_format($value['price']); ?></span>
                         </div>
-                        <div class="lot__timer timer">
-                            12:23
+                        <!-- Вызов функции по расчету, сколько часов и минут до конца аукциона-->
+                          <?php 
+                            $auc_end_hr = auction_end($value['expire']);
+                            
+                            // если осталось меньше часа, то будет выделено красным
+                            // добавление блоку класса timer--finishing
+                            $timer_finishing = "";
+                            if($auc_end_hr[0] == 0) {
+                            $timer_finishing = "timer--finishing";
+                            }
+                          ?>
+                        <div class="lot__timer timer <?= $timer_finishing; ?>">
+                        <?php echo($auc_end_hr[0].":".$auc_end_hr[1]); ?>
                         </div>
                     </div>
                 </div>

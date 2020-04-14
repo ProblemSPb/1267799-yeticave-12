@@ -37,7 +37,7 @@
                             // если осталось меньше часа, то будет выделено красным
                             // добавление блоку класса timer--finishing
                             $timer_finishing = "";
-                            if($auc_end_hr[0] == 0) {
+                            if($auc_end_hr[0] < 1) {
                             $timer_finishing = "timer--finishing";
                             }
                           ?>

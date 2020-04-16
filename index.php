@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('Europe/Berlin');
+
 $is_auth = rand(0, 1);
 $user_name = 'Lena'; // укажите здесь ваше имя
 $title = 'YetiCave';
@@ -14,51 +16,60 @@ $adverts = [
         'name' => '2014 Rossignol District Snowboard',
         'category' => 'Доски и лыжи',
         'price' => 10999,
-        'url' => '/img/lot-1.jpg'
-
+        'url' => '/img/lot-1.jpg',
+        'expire' => '2020-04-18'
     ],
 
     [
         'name' => 'DC Ply Mens 2016/2017 Snowboard',
         'category' => 'Доски и лыжи',
         'price' => 159999,
-        'url' => '/img/lot-2.jpg'
-
+        'url' => '/img/lot-2.jpg',
+        'expire' => '2020-04-25'
     ],
 
     [
         'name' => 'Крепления Union Contact Pro 2015 года размер L/XL',
         'category' => 'Крепления',
         'price' => 8000,
-        'url' => '/img/lot-3.jpg'
-
+        'url' => '/img/lot-3.jpg',
+        'expire' => '2020-04-13'
     ],
 
     [
         'name' => 'Ботинки для сноуборда DC Mutiny Charocal',
         'category' => 'Ботинки',
         'price' => 10999,
-        'url' => '/img/lot-4.jpg'
-
+        'url' => '/img/lot-4.jpg',
+        'expire' => '2020-04-14'
     ],
 
     [
         'name' => 'Куртка для сноуборда DC Mutiny Charocal',
         'category' => 'Одежда',
         'price' => 7500,
-        'url' => '/img/lot-5.jpg'
-
+        'url' => '/img/lot-5.jpg',
+        'expire' => '2020-04-19'
     ],
 
     [
         'name' => 'Маска Oakley Canopy',
         'category' => 'Разное',
         'price' => 5400,
-        'url' => '/img/lot-6.jpg'
-
-    ],
+        'url' => '/img/lot-6.jpg',
+        'expire' => '2020-04-17'
+    ]
 ];
 
+// расчет времени до конца аукциона
+function auction_end($auction_end_date) {
+    $time_diff = strtotime($auction_end_date) - time();
+    $hours = floor($time_diff / 3600);
+    $mins = floor(($time_diff % 3600) / 60);
+    $time_auc_end = [$hours, $mins];
+    return $time_auc_end;
+
+};
 
 // форматирование суммы цены
 function price_format($num) {
@@ -70,6 +81,7 @@ function price_format($num) {
     $num = $num." ₽"; // добавляем рубли
     return $num;
 };
+
 
 // функция подключения темплейтов
 function include_template($file_name, $data) {

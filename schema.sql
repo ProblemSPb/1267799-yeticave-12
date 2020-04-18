@@ -21,23 +21,28 @@ CREATE TABLE lot (
     create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
-    img_link VARCHAR(65535) NOT NULL,
-    start_price DECIMAL(8,2) UNSIGNED NOT NULL ,
+    img_link TEXT NOT NULL,
+    start_price DECIMAL(8,2) NOT NULL ,
     end_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    bid_step DECIMAL(8,2) UNSIGNED NOT NULL,
+    bid_step DECIMAL(8,2) NOT NULL,
+    userID INT NOT NULL,
+    winnerID INT NOT NULL,
+    categoryID INT NOT NULL,
     ## связи
     FOREIGN KEY (userID) REFERENCES user (id),
     FOREIGN KEY (winnerID) REFERENCES user (id),
-    FOREIGN KEY (categoryid) REFERENCES category (id)
+    FOREIGN KEY (categoryID) REFERENCES category (id)
     );
     
 CREATE TABLE bid (
 	id INT AUTO_INCREMENT PRIMARY KEY,
     bid_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    sum_price DECIMAL(8,2) UNSIGNED NOT NULL,
+    sum_price DECIMAL(8,2) NOT NULL,
+    userID INT NOT NULL,
+    lotID INT NOT NULL,
     FOREIGN KEY (userID) REFERENCES user (id),
     FOREIGN KEY (lotID) REFERENCES lot (id)
     );
-    
+
 
     

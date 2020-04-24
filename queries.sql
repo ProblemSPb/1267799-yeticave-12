@@ -98,13 +98,14 @@ SELECT name FROM category;
 -- получить самые новые, открытые лоты.
 -- Каждый лот должен включать название, стартовую цену, ссылку на изображение, текущую цену, название категории
 SELECT lot.name, lot.start_price, lot.img_link, bid.sum_price, category.name FROM lot
-LEFT JOIN category ON category.id = lot.categoryID
+INNER JOIN category ON category.id = lot.categoryID
 LEFT JOIN bid ON bid.lotID = lot.id
 WHERE lot.end_date > NOW();
 
 -- показать лот по его id. Получите также название категории, к которой принадлежит лот
-SELECT lot.id, category.name FROM lot
-LEFT JOIN category ON category.id = lot.categoryID;
+SELECT lot.id, lot.name, category.name FROM lot
+INNER JOIN category ON category.id = lot.categoryID
+WHERE lot.id = 2;
 
 -- обновить название лота по его идентификатору
 -- Добавлено слово "Мужская" в название

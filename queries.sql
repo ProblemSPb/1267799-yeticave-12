@@ -103,8 +103,9 @@ LEFT JOIN bid ON bid.lotID = lot.id
 WHERE lot.end_date > NOW();
 
 -- показать лот по его id. Получите также название категории, к которой принадлежит лот
-SELECT lot.id, category.name FROM lot
-LEFT JOIN category ON category.id = lot.categoryID;
+SELECT lot.id, lot.name, category.name FROM lot
+INNER JOIN category ON category.id = lot.categoryID
+WHERE lot.id = 2;
 
 -- обновить название лота по его идентификатору
 -- Добавлено слово "Мужская" в название

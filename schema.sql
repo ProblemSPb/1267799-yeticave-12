@@ -1,6 +1,4 @@
--- скима(база данных) создана в MySQLWorkbench
--- остальной код написан ниже
-CREATE DATABASE `yeticave` DEFAULT CHARACTER SET `utf8`;
+CREATE DATABASE IF NOT EXISTS yeticave DEFAULT CHARACTER SET 'utf8';
 
 USE yeticave;
 

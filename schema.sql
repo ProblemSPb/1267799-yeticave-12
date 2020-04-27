@@ -42,6 +42,3 @@ CREATE TABLE IF NOT EXISTS bid (
     FOREIGN KEY (userID) REFERENCES user (id),
     FOREIGN KEY (lotID) REFERENCES lot (id)
     );
-
-
-    

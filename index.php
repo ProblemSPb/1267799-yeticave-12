@@ -6,60 +6,35 @@ $is_auth = rand(0, 1);
 $user_name = 'Lena'; // укажите здесь ваше имя
 $title = 'YetiCave';
 
-// добавлен массив с категориями
-$category = ["Доски и лыжи", "Крепления", "Ботинки", "Одежда", "Инструменты", "Разное"];
+// подключение к серверу
+$con = mysqli_connect("localhost", "root", "yourpasswd", "yeticave");
 
-// массив с объявлениями
-$adverts = [
+// блок тестировния подключения
+// if ($con == false) {
+//     print("Ошибка подключения: " . mysqli_connect_error());
+// }
+// else {
+//     print("Соединение установлено"); 
+// }
 
-    [
-        'name' => '2014 Rossignol District Snowboard',
-        'category' => 'Доски и лыжи',
-        'price' => 10999,
-        'url' => '/img/lot-1.jpg',
-        'expire' => '2020-04-18'
-    ],
+mysqli_set_charset($con, "utf8");
 
-    [
-        'name' => 'DC Ply Mens 2016/2017 Snowboard',
-        'category' => 'Доски и лыжи',
-        'price' => 159999,
-        'url' => '/img/lot-2.jpg',
-        'expire' => '2020-04-25'
-    ],
+// получение категорий из БД
+$sql_category = "SELECT id, name, code_name FROM category";
+$sql_result = mysqli_query($con, $sql_category);
+// помещение полученных данных в массив
+$categories = mysqli_fetch_all($sql_result, MYSQLI_ASSOC);
 
-    [
-        'name' => 'Крепления Union Contact Pro 2015 года размер L/XL',
-        'category' => 'Крепления',
-        'price' => 8000,
-        'url' => '/img/lot-3.jpg',
-        'expire' => '2020-04-13'
-    ],
+// получение лотов из БД
+$sql_lots = "SELECT lot.name, lot.start_price as price, lot.img_link as url, lot.end_date as expire, category.name as category FROM lot LEFT JOIN category ON lot.categoryID = category.ID ORDER BY create_date DESC";
+$sql_lots_result = mysqli_query($con, $sql_lots);
+$lots = mysqli_fetch_all($sql_lots_result, MYSQLI_ASSOC);
 
-    [
-        'name' => 'Ботинки для сноуборда DC Mutiny Charocal',
-        'category' => 'Ботинки',
-        'price' => 10999,
-        'url' => '/img/lot-4.jpg',
-        'expire' => '2020-04-14'
-    ],
+// блок тестирования массива данных из БД
+// foreach($lots as $lot){
+//     print($lot['category']);
+// }
 
-    [
-        'name' => 'Куртка для сноуборда DC Mutiny Charocal',
-        'category' => 'Одежда',
-        'price' => 7500,
-        'url' => '/img/lot-5.jpg',
-        'expire' => '2020-04-19'
-    ],
-
-    [
-        'name' => 'Маска Oakley Canopy',
-        'category' => 'Разное',
-        'price' => 5400,
-        'url' => '/img/lot-6.jpg',
-        'expire' => '2020-04-17'
-    ]
-];
 
 // расчет времени до конца аукциона
 function auction_end($auction_end_date) {
@@ -104,8 +79,9 @@ function include_template($file_name, $data) {
 //подключаем темплейты
 $content = include_template('main.php',
     [
-        'adverts' => $adverts,
-        'category' => $category
+        //'adverts' => $adverts,
+        'lots' => $lots,
+        'categories' => $categories
     ]);
 
 $layout = include_template('layout.php', 
@@ -114,7 +90,7 @@ $layout = include_template('layout.php',
         'title' => 'YetiCave',
         'user_name' => $user_name,
         'is_auth' => $is_auth,
-        'category' => $category     
+        'categories' => $categories
     ]);
 
 print($layout);

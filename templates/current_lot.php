@@ -1,18 +1,11 @@
-<?php
-
-$is_auth = rand(0, 1);
-$user_name = 'Lena';
-$title = 'YetiCave'; 
-
-
-?>
-
 <!DOCTYPE html>
 <html lang="ru">
 
+<?php foreach($lot as $key => $value) : ?>
+
 <head>
     <meta charset="UTF-8">
-    <title>DC Ply Mens 2016/2017 Snowboard</title>
+    <title><?= $value['name']; ?></title>
     <link href="../css/normalize.min.css" rel="stylesheet">
     <link href="../css/style.css" rel="stylesheet">
 </head>
@@ -69,36 +62,42 @@ $title = 'YetiCave';
 
             </nav>
             <section class="lot-item container">
-                <h2>DC Ply Mens 2016/2017 Snowboard</h2>
+                <h2><?= $value['name'];?></h2>
                 <div class="lot-item__content">
                     <div class="lot-item__left">
                         <div class="lot-item__image">
-                            <img src="../img/lot-image.jpg" width="730" height="548" alt="Сноуборд">
+                            <img src=<?= $value['img_link']; ?> width="730" height="548" alt=<?= $value['category name']; ?>>
                         </div>
-                        <p class="lot-item__category">Категория: <span>Доски и лыжи</span></p>
-                        <p class="lot-item__description">Легкий маневренный сноуборд, готовый дать жару в любом парке, растопив
-                            снег
-                            мощным щелчкоми четкими дугами. Стекловолокно Bi-Ax, уложенное в двух направлениях, наделяет этот
-                            снаряд
-                            отличной гибкостью и отзывчивостью, а симметричная геометрия в сочетании с классическим прогибом
-                            кэмбер
-                            позволит уверенно держать высокие скорости. А если к концу катального дня сил совсем не останется,
-                            просто
-                            посмотрите на Вашу доску и улыбнитесь, крутая графика от Шона Кливера еще никого не оставляла
-                            равнодушным.</p>
+                        <p class="lot-item__category">Категория: <span><?= $value['category name']; ?></span></p>
+                        <p class="lot-item__description"><?= $value['description']; ?></p>
                     </div>
+
                     <div class="lot-item__right">
                         <div class="lot-item__state">
-                            <div class="lot-item__timer timer">
-                                10:54
-                            </div>
+                            
+
+                          <!-- Вызов функции по расчету, сколько часов и минут до конца аукциона-->
+                          <?php 
+                            $auc_end_hr = auction_end($value['end_date']);
+                            
+                            // если осталось меньше часа, то будет выделено красным
+                            // добавление блоку класса timer--finishing
+                            $timer_finishing = "";
+                            if($auc_end_hr[0] < 1) {
+                            $timer_finishing = "timer--finishing";
+                            }
+                          ?>
+                        <div class="lot-item__timer timer <?= $timer_finishing; ?>">
+                        <?php echo($auc_end_hr[0].":".$auc_end_hr[1]); ?>
+                        </div>
+
                             <div class="lot-item__cost-state">
                                 <div class="lot-item__rate">
                                     <span class="lot-item__amount">Текущая цена</span>
                                     <span class="lot-item__cost">10 999</span>
                                 </div>
                                 <div class="lot-item__min-cost">
-                                    Мин. ставка <span>12 000 р</span>
+                                    Мин. ставка <span><?= price_format($value['bid_step']); ?></span>
                                 </div>
                             </div>
                             <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post" autocomplete="off">
@@ -110,6 +109,8 @@ $title = 'YetiCave';
                                 <button type="submit" class="button">Сделать ставку</button>
                             </form>
                         </div>
+<?php endforeach; ?>
+
                         <div class="history">
                             <h3>История ставок (<span>10</span>)</h3>
                             <table class="history__list">
@@ -231,5 +232,6 @@ $title = 'YetiCave';
     </footer>
 
 </body>
+
 
 </html>

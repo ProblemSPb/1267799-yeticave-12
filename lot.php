@@ -1,11 +1,9 @@
 <?php
 
-require_once('functions/include_template.php');
-require_once('functions/price_format.php');
-require_once('functions/db_connect.php');
-require_once('functions/sql_query_result.php');
+require_once('functions/functions.php');
+require_once('functions/db_functions.php');
 
-$id = $_GET['id'];
+//$id = $_GET['id'];
 
 $con = db_connect();
 
@@ -18,8 +16,10 @@ $current_lot_page = include_template('current_lot.php',
         'categories' => $categories
 ]); 
 
-if(!isset($id)) {
-    //
-} else {
-    print($current_lot_page);
-}
+// if(!isset($id)) {
+//     //
+// } else {
+//     print($current_lot_page);
+// }
+
+print($current_lot_page);

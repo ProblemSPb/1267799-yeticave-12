@@ -1,17 +1,12 @@
 <?php
 
-date_default_timezone_set('Europe/Berlin');
-
-require_once('functions/functions.php');
-require_once('functions/db_functions.php');
+require_once('settings.php');
 
 
 $is_auth = rand(0, 1);
 $user_name = 'Lena'; // укажите здесь ваше имя
 $title = 'YetiCave';
 
-
-$con = db_connect();
 
 // получение категорий из БД
 $sql_category = "SELECT id, name, code_name FROM category";

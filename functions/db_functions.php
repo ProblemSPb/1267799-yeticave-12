@@ -1,21 +1,24 @@
 <?php
 
-function db_connect() {
-    // подключение к серверу
-$con = mysqli_connect("localhost", "root", "yourpasswd", "yeticave");
+$config_file = '/Users/admin/Documents/yeticave/config.php';
 
-// блок тестировния подключения
-// if ($con == false) {
-//     print("Ошибка подключения: " . mysqli_connect_error());
-// }
-// else {
-//     print("Соединение установлено"); 
-// }
+// проверка существования config.php
+if(file_exists($config_file)){
+    
+    require_once($config_file);
 
-mysqli_set_charset($con, "utf8");
-
-return $con;
+    function db_connect($db_config) {
+        // подключение к серверу
+    $con = mysqli_connect($db_config['db_host'], $db_config['db_username'], $db_config['db_password'], $db_config['db_name']);
+    mysqli_set_charset($con, "utf8");
+    
+    return $con;
+    };
+} else {
+    exit("Файл config.php не найден");
 };
+
+
 
 // получение данных из БД
 function sql_query_result($db_connect, $sql_query) {
@@ -29,3 +32,13 @@ function sql_query_result($db_connect, $sql_query) {
 // foreach($lots as $lot){
 //     print($lot['category']);
 // }
+
+
+// блок тестировния подключения
+    // if ($con == false) {
+    //     print("Ошибка подключения: " . mysqli_connect_error());
+    // }
+    // else {
+    //     print("Соединение установлено"); 
+    // }
+    

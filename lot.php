@@ -6,14 +6,14 @@ require_once('settings.php');
 $is_auth = rand(0, 1);
 $user_name = 'Lena';
 
+// получение категорий из БД
+$sql_category = "SELECT id, name, code_name FROM category";
+$categories = sql_query_result($con, $sql_category);
+
 //проверка параметра из строки запроса
 if(isset($_GET['id'])) {
 
     $id = intval($_GET['id']);
-
-    // получение категорий из БД
-    $sql_category = "SELECT id, name, code_name FROM category";
-    $categories = sql_query_result($con, $sql_category);
 
     // проверяем, если запрошенный id лота существует в БД
     $sql_format = "SELECT lot.*, category.name as 'category name' FROM lot  INNER JOIN category on lot.categoryID = category.ID WHERE lot.id = %d";

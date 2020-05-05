@@ -19,27 +19,27 @@ $sql_lot = sprintf($sql_format, $id);
 // данные по лоту 
 $lot_data = sql_query_result($con, $sql_lot);
 
-$lot_content = "";
-
 // если существует -> показать лот
 // если нет -> 404
 if($lot_data != null) {
-    $lot_content = include_template('lot_template.php',
+    $content = include_template('lot_template.php',
     [
-        'lot' => $lot_data,
+        'lot' => $lot_data[0]
     ]);
+    $title = $lot_data[0]['name'];
 } else {
-    $lot_content = include_template('404.php');
+    $content = include_template('404.php');
+    $title = '404 Страница не найдена';
 };
 
 // подключаем лейаут
-$lot_layout = include_template('lot_layout.php',
+$lot_layout = include_template('page_layout.php',
     [
-        'lot_content' => $lot_content,
+        'content' => $content,
         'categories' => $categories,
         'is_auth' => $is_auth,
         'user_name' => $user_name,
-        'title' => $lot_data[0]['name']
+        'title' => $title
     ]);
 
 print($lot_layout);

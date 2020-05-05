@@ -11,7 +11,7 @@ function auction_end($auction_end_date) {
 };
 
 // функция подключения темплейтов
-function include_template($file_name, $data) {
+function include_template($file_name, $data = array()) {
     $path ='templates/'.$file_name;
     $result = '';
 

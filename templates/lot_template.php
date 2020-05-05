@@ -1,12 +1,12 @@
 <section class="lot-item container">
-    <h2><?= $lot[0]['name'];?></h2>
+    <h2><?php $title; ?></h2>
     <div class="lot-item__content">
         <div class="lot-item__left">
             <div class="lot-item__image">
-                <img src=<?= $lot[0]['img_link']; ?> width="730" height="548" alt=<?= $value['category name']; ?>>
+                <img src=<?= $lot['img_link']; ?> width="730" height="548" alt=<?= $lot['category name']; ?>>
             </div>
-            <p class="lot-item__category">Категория: <span><?= $lot[0]['category name']; ?></span></p>
-            <p class="lot-item__description"><?= $lot[0]['description']; ?></p>
+            <p class="lot-item__category">Категория: <span><?= $lot['category name']; ?></span></p>
+            <p class="lot-item__description"><?= $lot['description']; ?></p>
         </div>
 
         <div class="lot-item__right">
@@ -15,7 +15,7 @@
 
                 <!-- Вызов функции по расчету, сколько часов и минут до конца аукциона-->
                 <?php 
-                $auc_end_hr = auction_end($lot[0]['end_date']);
+                $auc_end_hr = auction_end($lot['end_date']);
                 
                 // если осталось меньше часа, то будет выделено красным
                 // добавление блоку класса timer--finishing
@@ -34,7 +34,7 @@
                         <span class="lot-item__cost">10 999</span>
                     </div>
                     <div class="lot-item__min-cost">
-                        Мин. ставка <span><?= price_format($lot[0]['bid_step']); ?></span>
+                        Мин. ставка <span><?= price_format($lot['bid_step']); ?></span>
                     </div>
                 </div>
                 <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post" autocomplete="off">

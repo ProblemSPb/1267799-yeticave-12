@@ -60,7 +60,7 @@
 
             </nav>
             
-            <?= $lot_content; ?>
+            <?= $content; ?>
 
         </main>
 

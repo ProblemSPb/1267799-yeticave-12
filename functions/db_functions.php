@@ -1,6 +1,6 @@
 <?php
 
-$config_file = '/Users/admin/Documents/yeticave/config.php';
+$config_file = 'config.php';
 
 // проверка существования config.php
 if(file_exists($config_file)){

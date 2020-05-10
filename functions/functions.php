@@ -38,3 +38,122 @@ function price_format($num) {
     $num = $num." ₽"; // добавляем рубли
     return $num;
 };
+
+//сохранение значений полей
+function getPostValue($name) {
+    return $_POST($name) ?? "";
+}
+
+// загрузка файлов
+function uploadImg() {
+
+    if(isset($_FILES['lot_img'])) {
+        $file_name = $_FILES['lot_img']['name'];
+        $file_path = __DIR__.'/uploads/';
+        $file_url = '/uploads/'.$file_name;
+
+        move_uploaded_file($_FILES['lot_img']['tmp_name'], $file_path.$file_name);
+
+        return $file_url;
+    }
+}
+
+// ВАЛИДАЦИЯ ПОЛЕЙ ФОРМЫ
+
+// загружен ли файл
+// тип и размер загруженного файла
+
+function validateNotEmpty($field) {
+
+    if(empty($field)){
+        return 'Это поле должно быть заполнено';
+    }
+
+}
+
+// проверка категории
+function validateCategory($category) {
+
+    if ($category === 'Выберите категорию') {
+        return "Категория не выбрана";
+    }
+}
+
+// проверка длины вводимого значения
+function validateText($name, $min, $max) {
+
+    validateNotEmpty($name);
+    
+    if(mb_strlen($name)<$min) {
+        return $name . " должно быть больше " . $min . " символов";
+    } elseif(mb_strlen($name) > $max) {
+        return $name . " должно быть меньше " . $max . " символов";
+    }
+
+}
+
+// проверка формата цены и шага ставки
+function validateNum($num) {
+
+    validateNotEmpty($num);
+
+    if(!is_numeric($num)) {
+        return "Значение должно быть числом";
+    }
+
+    if($num <= 0) {
+        return "Значение должно быть больше нуля";
+    }
+
+}
+
+// НИЧЕГО В ЭТОЙ ФУНКЦИИ НЕ РАБОТАЕТ
+function validateImg() {
+
+    // $type_file = mime_content_type($_FILES['lot_img']['tmp_name']);
+    // if($type_file !== "image/jpeg" && $type_file !== "image/png") {
+    //     $errors['lot_img'] = 'Поддерживается загрузка только png, jpg, jpeg ' . $type_file;
+    // }
+
+    if(empty($_FILES['lot_img']['name'])) {
+        $errors['lot_img'] = "Это обязательное поле. Загрузите картинку товара";
+    }
+    
+    // проверка на формат и размер
+    if(isset($_FILES['lot_img']['name'])) {
+        // $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        // $file_name = $_FILES['lot_img']['tmp_name'];
+        $file_size = $_FILES['lot_img']['size'];
+
+        $file_type = $_FILES['lot_img']['type'];
+
+        if($file_type !== 'image/jpeg' || $file_type !== 'image/png' ) {
+            $errors['lot_img'] = "Загрузите картинку в формате jpg/jpeg или png";
+        }
+
+        if($file_size > 5000000) {
+        return "Файл не должен быть больше 5мб";
+        }
+    }
+
+
+
+}
+
+function is_date_valid(string $date) {
+
+    validateNotEmpty($date);
+
+    $format_to_check = 'Y-m-d';
+    $dateTimeObj = date_create_from_format($format_to_check, $date);
+
+    if ($dateTimeObj !== false && array_sum(date_get_last_errors()) === 0) {
+        $expect_auc_end = (strtotime($date) - strtotime('now')) / 3600;
+        if($expect_auc_end <= 24) {
+            return "Окончание аукциона должно быть не раньше 24 часов";
+        }
+    }
+    else {
+        return "Укажите дажу окончания аукциона";
+    }
+}

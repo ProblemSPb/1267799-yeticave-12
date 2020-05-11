@@ -41,27 +41,10 @@ function price_format($num) {
 
 //сохранение значений полей
 function getPostValue($name) {
-    return $_POST($name) ?? "";
-}
-
-// загрузка файлов
-function uploadImg() {
-
-    if(isset($_FILES['lot_img'])) {
-        $file_name = $_FILES['lot_img']['name'];
-        $file_path = __DIR__.'/uploads/';
-        $file_url = '/uploads/'.$file_name;
-
-        move_uploaded_file($_FILES['lot_img']['tmp_name'], $file_path.$file_name);
-
-        return $file_url;
-    }
+    return $_POST[$name] ?? "";
 }
 
 // ВАЛИДАЦИЯ ПОЛЕЙ ФОРМЫ
-
-// загружен ли файл
-// тип и размер загруженного файла
 
 function validateNotEmpty($field) {
 
@@ -74,7 +57,7 @@ function validateNotEmpty($field) {
 // проверка категории
 function validateCategory($category) {
 
-    if ($category === 'Выберите категорию') {
+    if ($category <= 0) {
         return "Категория не выбрана";
     }
 }
@@ -85,9 +68,9 @@ function validateText($name, $min, $max) {
     validateNotEmpty($name);
     
     if(mb_strlen($name)<$min) {
-        return $name . " должно быть больше " . $min . " символов";
+        return  "Это поле должно быть больше " . $min . " символов";
     } elseif(mb_strlen($name) > $max) {
-        return $name . " должно быть меньше " . $max . " символов";
+        return "Это поле должно быть меньше " . $max . " символов";
     }
 
 }
@@ -97,8 +80,9 @@ function validateNum($num) {
 
     validateNotEmpty($num);
 
-    if(!is_numeric($num)) {
-        return "Значение должно быть числом";
+    // целое число
+    if(!(ctype_digit($num))) {
+        return "Введите целое число больше 0";
     }
 
     if($num <= 0) {
@@ -107,37 +91,25 @@ function validateNum($num) {
 
 }
 
-// НИЧЕГО В ЭТОЙ ФУНКЦИИ НЕ РАБОТАЕТ
 function validateImg() {
 
-    // $type_file = mime_content_type($_FILES['lot_img']['tmp_name']);
-    // if($type_file !== "image/jpeg" && $type_file !== "image/png") {
-    //     $errors['lot_img'] = 'Поддерживается загрузка только png, jpg, jpeg ' . $type_file;
-    // }
-
+    // проверка на заполнение
     if(empty($_FILES['lot_img']['name'])) {
-        $errors['lot_img'] = "Это обязательное поле. Загрузите картинку товара";
-    }
-    
-    // проверка на формат и размер
-    if(isset($_FILES['lot_img']['name'])) {
-        // $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        // $file_name = $_FILES['lot_img']['tmp_name'];
+        return "Загрузите картинку товара";
+    } else {
+        //формат
+        $allowedTypes = array(IMAGETYPE_PNG, IMAGETYPE_JPEG);
+        $detectedType = exif_imagetype($_FILES['lot_img']['tmp_name']);
+
+        if(!in_array($detectedType, $allowedTypes)){
+            return "Загрузите картинку в формате jpg/jpeg или png";
+        }
+
         $file_size = $_FILES['lot_img']['size'];
-
-        $file_type = $_FILES['lot_img']['type'];
-
-        if($file_type !== 'image/jpeg' || $file_type !== 'image/png' ) {
-            $errors['lot_img'] = "Загрузите картинку в формате jpg/jpeg или png";
-        }
-
         if($file_size > 5000000) {
-        return "Файл не должен быть больше 5мб";
+            return "Файл не должен быть больше 5мб";
         }
     }
-
-
-
 }
 
 function is_date_valid(string $date) {
@@ -157,3 +129,4 @@ function is_date_valid(string $date) {
         return "Укажите дажу окончания аукциона";
     }
 }
+

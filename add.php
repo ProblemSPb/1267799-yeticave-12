@@ -3,6 +3,7 @@
 require_once('settings.php');
 require_once('functions/functions.php');
 require_once('functions/db_functions.php');
+require_once('functions/validation.php');
 
 $is_auth = rand(0, 1);
 $user_name = 'Lena';
@@ -117,9 +118,3 @@ $layout = include_template('page_layout.php',
 
 print($layout);
 
-
-////
-//// КАТЕГОРИЯ НЕ ПОКАЗЫВАЕТ ERROR MESSAGE
-//// КАТЕГОРИЯ НЕ ЗАПОМИНАЕТ ЗНАЧЕНИЕ
-//// КАРТИНКА ПРОПАДАЕТ ЕСЛИ БЫЛИ ОШИБКИ В ДРУГИХ ПОЛЯХ, но не в картинке
-//// НЕ НРАВИТСЯ КУСОК php в add_lot.php в шапке, не придумала, куда его впихнуть еще

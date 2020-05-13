@@ -1,22 +1,21 @@
 <?php
 
 require_once('settings.php');
-require_once('functions/functions.php');
-require_once('functions/db_functions.php');
-require_once('functions/validation.php');
 
-$is_auth = 0;
 $title = 'Регистрация';
+
+$is_auth = "";
+if($is_auth == 1) {
+    header("Location: index.php");
+}
 $user_name = 'Lena';
 
 // получение категорий из БД
 $sql_category = "SELECT id, name, code_name FROM category";
 $categories = sql_query_result($con, $sql_category);
 
-
-
 // если форма отправлена
-if ($_SERVER['REQUEST_METHOD']=== 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  
     $errors = [];
 
@@ -26,13 +25,13 @@ if ($_SERVER['REQUEST_METHOD']=== 'POST') {
             return validateEmail($_POST['email']);
         },
         'name' => function() {
-            return validateCategory($_POST['category']);
+            return validateText($_POST['name'], 2, 40);
         },
         'password' => function() {
-            return validateText($_POST['description'], 10, 1000);
+            return validatePass($_POST['password']);
         },
         'user_contact' => function() {
-            return validateNum($_POST['start_price']);
+            return validateText($_POST['user_contact'], 6, 25);
         }
     ];
 
@@ -43,6 +42,18 @@ if ($_SERVER['REQUEST_METHOD']=== 'POST') {
             $errors[$key] = $rule();
         }
     }
+
+    // проверка если такой email уже зарегестрирован
+    $stmt = $con->prepare("SELECT id FROM user WHERE email = ?");
+    $stmt->bind_param("s", $_POST['email']);
+    $stmt->execute();
+    $stmt_result = mysqli_stmt_get_result($stmt);
+    $stmt->close();
+
+    if(mysqli_num_rows($stmt_result)) {
+        $errors['email'] = "Пользователь с таким email уже существует";
+    }
+
 
      // финальный массив с ошибками
      $errors = array_filter($errors);
@@ -55,24 +66,24 @@ if ($_SERVER['REQUEST_METHOD']=== 'POST') {
     );
 
     // если ошибок нет, записать ЛОТ в БД
-    //if(empty($errors)) {
+    if(empty($errors)) {
 
-        //запись данных из формы в БД -> таблица lot 
-        // $stmt = $con->prepare("INSERT INTO lot (create_date, name, description, img_link, start_price, end_date, bid_step, userID, winnerID, categoryID) VALUES (NOW(), ?, ?, ?, ?, ?, ?, 1, 2, ?)");
-        // $stmt->bind_param("sssisii", $_POST['name'], $_POST['description'], $file_url, $_POST['start_price'], $_POST['end_date'], $_POST['bid_step'], $_POST['category']);
-        // $stmt_result = $stmt->execute();
-        // $stmt->close();
+        // запись данных из формы в БД -> таблица user 
+        $hashed_pass = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        $stmt = $con->prepare("INSERT INTO user (register_date, email, name, password, user_contact) VALUES (NOW(), ?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $_POST['email'], $_POST['name'], $hashed_pass, $_POST['user_contact']);
+        $stmt_result = $stmt->execute();
+        $stmt->close();
 
-        // if($stmt_result) {
-        //     // переадресация на страницу созданного лота
-        //     $new_lot_id = mysqli_insert_id($con);
-        //     header("Location: /lot.php?id=".$new_lot_id);
-        // } else {
-        //     print(mysqli_error($con));
-        // } 
+        if($stmt_result) {
+            // переадресация на страницу созданного лота
+            header("Location: /login.php");
+        } else {
+            print(mysqli_error($con));
+        } 
 
-        // $con->close();
-    //}
+        $con->close();
+    }
 
 } else {
 

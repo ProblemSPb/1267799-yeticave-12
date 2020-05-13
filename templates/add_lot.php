@@ -36,7 +36,7 @@
           <label for="lot_img">
             Добавить
           </label>
-          <span class="form__error"><?= $errors['lot_img'] ?? ""?></span>
+          <span class="form__error"><?= $errors['lot_img'] ?? ""; ?></span>
         </div>
       </div>
 
@@ -45,19 +45,19 @@
         <div class="form__item form__item--small <?= isset($errors['start_price']) ? 'form__item--invalid' : '';?>">
           <label for="lot-rate">Начальная цена <sup>*</sup></label>
           <input id="lot-rate" type="text" name="start_price" placeholder="0" value="<?= getPostValue('start_price'); ?>">
-          <span class="form__error"><?= $errors['start_price'] ?? ""?></span>
+          <span class="form__error"><?= $errors['start_price'] ?? ""; ?></span>
         </div>
 
         <div class="form__item form__item--small <?= isset($errors['bid_step']) ? 'form__item--invalid' : '';?>">
           <label for="lot-step">Шаг ставки <sup>*</sup></label>
           <input id="lot-step" type="text" name="bid_step" placeholder="0" value="<?= getPostValue('bid_step'); ?>">
-          <span class="form__error"><?= $errors['bid_step'] ?? ""?></span>
+          <span class="form__error"><?= $errors['bid_step'] ?? ""; ?></span>
         </div>
 
         <div class="form__item <?= isset($errors['end_date']) ? 'form__item--invalid' : '';?>">
           <label for="lot-date">Дата окончания торгов <sup>*</sup></label>
           <input class="form__input-date" id="lot-date" type="text" name="end_date" placeholder="Введите дату в формате ГГГГ-ММ-ДД" value="<?= getPostValue('end_date'); ?>">
-          <span class="form__error"><?= $errors['end_date'] ?? ""?></span>
+          <span class="form__error"><?= $errors['end_date'] ?? ""; ?></span>
         </div>
 
       </div>

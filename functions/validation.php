@@ -6,7 +6,10 @@ function getPostValue($name) {
     return $_POST[$name] ?? "";
 }
 
-// ВАЛИДАЦИЯ ПОЛЕЙ ФОРМЫ
+
+/////////////////////////
+// ФОРМА ДОБАВЛЕНИЯ ЛОТА
+//////////////////////// 
 
 function validateNotEmpty($field) {
 
@@ -75,6 +78,37 @@ function validateImg() {
     }
 }
 
+// конвертация кириллицы в латиницу в названии файла
+function translate($string) {
+    // Замена символов
+    $replace = [
+      'а' => 'a',   'б' => 'b',
+      'в' => 'v',   'г' => 'g',
+      'д' => 'd',   'е' => 'e',
+      'ё' => 'yo',  'ж' => 'j',
+      'з' => 'z',   'и' => 'i',
+      'й' => 'y',   'к' => 'k',
+      'л' => 'l',   'м' => 'm',
+      'н' => 'n',   'о' => 'o',
+      'п' => 'p',   'р' => 'r',
+      'с' => 's',   'т' => 't',
+      'у' => 'u',   'ф' => 'f',
+      'х' => 'h',   'ц' => 'ts',
+      'ч' => 'ch',  'ш' => 'sh',
+      'щ' => 'sch', 'ъ' => '',
+      'ы' => 'i',   'ь' => '',
+      'э' => 'e',   'ю' => 'ju',
+      'я' => 'ja',  ' ' => '-'
+    ];
+
+    // Переводим строку в нижний регистр
+    $string = mb_strtolower($string, 'utf-8');
+    // Заменяем
+    $string = strtr($string, $replace);
+    // Заменяем все лишние символы и возвращаем
+    return preg_replace('~[^a-z\-]~', null, $string);
+
+}
 // проверка даты
 function is_date_valid(string $date) {
 
@@ -94,3 +128,39 @@ function is_date_valid(string $date) {
     }
 }
 
+/////////////////////////
+// ФОРМА РЕГИСТРАЦИИ
+////////////////////////
+
+// валидация email
+
+function validateEmail($email) {
+
+    validateNotEmpty($email);
+
+    if(!filter_input(INPUT_POST, $email, FILTER_VALIDATE_EMAIL)) {
+        return "Введите корректный email";
+    }
+}
+
+// валидация пароля
+function validatePass($pass) {
+
+    validateNotEmpty($pass);
+
+    // добавить валидацию 
+    if(strlen($pass) < 6) {
+        return "Пароль должен быть не менее 6 символов и содержать цифры, заглавные и строчные буквы";
+    }
+
+    if(strlen($pass) > 40 ) {
+        return "Пароль не должен быть больше 40 символов и содержать цифры, заглавные и строчные буквы";
+    }
+
+    if(!((preg_match('/[A-Z]/', $pass)) && (preg_match('/[a-z]/', $pass)) && preg_match('/[0-9]/', $pass))) {
+        return "Пароль должен содержать цифры, заглавные и строчные буквы";
+    }
+}
+
+// валидация имени и валидацию контакта
+// использовать validateText

@@ -1,9 +1,6 @@
 <?php
 
 require_once('settings.php');
-require_once('functions/functions.php');
-require_once('functions/db_functions.php');
-require_once('functions/validation.php');
 
 $is_auth = rand(0, 1);
 $user_name = 'Lena';
@@ -72,7 +69,9 @@ if ($_SERVER['REQUEST_METHOD']=== 'POST') {
 
         // загрузка файлa
         if(isset($_FILES['lot_img'])) {
-            $file_name = $_FILES['lot_img']['name'];
+
+            $pathInfo = pathinfo($_FILES['lot_img']['name']);
+            $file_name = translate($pathInfo['filename']).".".$pathInfo['extension'];
             $file_path = __DIR__.'/uploads/';
             $file_url = '/uploads/'.$file_name; // path to a file in uploads
 

@@ -87,11 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 } else {
 
-    $content = include_template('sign_up_templ.php', 
-    [
-        'categories' => $categories
-    ]
-    );
+    $content = include_template('sign_up_templ.php');
 
 }
 

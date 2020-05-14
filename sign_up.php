@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]
     );
 
-    // если ошибок нет, записать ЛОТ в БД
+    // если ошибок нет, записать юзера в БД
     if(empty($errors)) {
 
         // запись данных из формы в БД -> таблица user 
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
 
         if($stmt_result) {
-            // переадресация на страницу созданного лота
+            // переадресация на страницу логина
             header("Location: /login.php");
         } else {
             print(mysqli_error($con));

@@ -1,6 +1,7 @@
 <?php
 
 
+
 //сохранение значений полей
 function getPostValue($name) {
     return $_POST[$name] ?? "";
@@ -33,7 +34,7 @@ function validateText($name, $min, $max) {
     validateNotEmpty($name);
     
     if(mb_strlen($name)<$min) {
-        return  "Это поле должно быть больше " . $min . " символов";
+        return  "Это поле должно быть не меньше " . $min . " символов";
     } elseif(mb_strlen($name) > $max) {
         return "Это поле должно быть меньше " . $max . " символов";
     }
@@ -136,11 +137,22 @@ function is_date_valid(string $date) {
 
 function validateEmail($email) {
 
-    validateNotEmpty($email);
-
-    if(!filter_input(INPUT_POST, $email, FILTER_VALIDATE_EMAIL)) {
+    if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return "Введите корректный email";
     }
+
+    // // проверка если такой email уже зарегестрирован
+    // $stmt = $con->prepare("SELECT id FROM user WHERE email = ?");
+    // $stmt->bind_param("s", $email);
+    // $stmt_result = $stmt->execute();
+    // $stmt->close();
+
+    // if($stmt_result) {
+    //     return "Пользователь с таким email уже существует";
+    // }
+
+    // $con->close();
+
 }
 
 // валидация пароля

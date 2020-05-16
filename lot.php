@@ -1,10 +1,14 @@
 <?php
+session_start();
 
 require_once('settings.php');
 
 
-$is_auth = rand(0, 1);
-$user_name = 'Lena';
+if (isset($_SESSION['user'])) {
+    $user_name = strip_tags($_SESSION['user']['name']);
+} else {
+    $user_name = "";
+}
 
 // получение категорий из БД
 $sql_category = "SELECT id, name, code_name FROM category";
@@ -44,7 +48,6 @@ $lot_layout = include_template('page_layout.php',
     [
         'content' => $content,
         'categories' => $categories,
-        'is_auth' => $is_auth,
         'user_name' => $user_name,
         'title' => $title
     ]);

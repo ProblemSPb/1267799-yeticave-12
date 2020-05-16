@@ -1,10 +1,16 @@
 <?php
 
+session_start();
+
 require_once('settings.php');
 
-$is_auth = rand(0, 1);
-$user_name = 'Lena';
 $title = 'Добавление лота';
+$user_name = "";
+
+// если пользователь НЕ залогинен
+if (isset($_SESSION['user'])) {
+    $user_name = strip_tags($_SESSION['user']['name']);
+}
 
 
 // получение категорий из БД
@@ -79,8 +85,8 @@ if ($_SERVER['REQUEST_METHOD']=== 'POST') {
         }
 
         //запись данных из формы в БД -> таблица lot 
-        $stmt = $con->prepare("INSERT INTO lot (create_date, name, description, img_link, start_price, end_date, bid_step, userID, winnerID, categoryID) VALUES (NOW(), ?, ?, ?, ?, ?, ?, 1, 2, ?)");
-        $stmt->bind_param("sssisii", $_POST['name'], $_POST['description'], $file_url, $_POST['start_price'], $_POST['end_date'], $_POST['bid_step'], $_POST['category']);
+        $stmt = $con->prepare("INSERT INTO lot (create_date, name, description, img_link, start_price, end_date, bid_step, userID, categoryID) VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssisiii", $_POST['name'], $_POST['description'], $file_url, $_POST['start_price'], $_POST['end_date'], $_POST['bid_step'], $_SESSION['user']['user_id'], $_POST['category']);
         $stmt_result = $stmt->execute();
         $stmt->close();
 
@@ -110,7 +116,6 @@ $layout = include_template('page_layout.php',
 [
     'content' => $content,
     'categories' => $categories,
-    'is_auth' => $is_auth,
     'user_name' => $user_name,
     'title' => $title
 ]);

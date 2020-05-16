@@ -4,26 +4,24 @@ require_once('settings.php');
 
 $title = "Вход";
 
-$is_auth = "";
-if ($is_auth == 1) {
+// если пользователь уже залогинен
+if (isset($_SESSION['user'])) {
+    $user_name = strip_tags($_SESSION['user']['name']);
     header("Location: index.php");
+    exit();
+} else {
+    $user_name = "";
 }
-$user_name = 'Lena';
 
 // получение категорий из БД
 $sql_category = "SELECT id, name, code_name FROM category";
 $categories = sql_query_result($con, $sql_category);
 
-// если пользователь уже залогинен
-if (isset($_SESSION["user"])) {
-    header("Location: index.php");
-    exit();
-}
+
+$errors = [];
 
 // если форма отправлена
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    $errors = [];
 
     // применение правил проверок
     $rules = [
@@ -43,41 +41,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Сравнить введенные имейл и пароль с БД
-    $stmt = $con->prepare("SELECT password FROM user WHERE email = ? LIMIT 1");
-    $stmt->bind_param("s", $_POST['email']);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_bind_result($stmt, $password);
-
-    // если email найден
-    if (mysqli_stmt_fetch($stmt)) {
-        // echo $_POST['password'];
-        // echo $password;
-        
-
-        // проверка пароля
-        $input = $_POST['password'];
-        if(password_verify($input, $password)) {
-            echo 'Password is valid!';
-        } else {
-            $errors['password'] = "Неверный пароль";
-        }
-
-        
-
-        // if (!(password_verify($input, $password))) {
-        //     $errors['password'] = "Неверный пароль";
-        // } else {
-        //     echo "correct password";
-        // }
-        // если имейл не найден
-    } else {
-        $errors['email'] = "Пользователь с таким email не найден";
-    }
-
-
-    // финальный массив с ошибками
     $errors = array_filter($errors);
+
+    if (empty($errors)) {
+
+        // Сравнить введенные имейл и пароль с БД
+        $stmt = $con->prepare("SELECT password, name, email, id FROM user WHERE email = ? LIMIT 1");
+        $stmt->bind_param("s", $_POST['email']);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_bind_result($stmt, $password, $name, $email, $id);
+
+        // если email найден
+        if (mysqli_stmt_fetch($stmt)) {
+            if (password_verify($_POST['password'], $password)) { // проверка пароля
+                
+                $user = array('email' => $email, 'name' => $name, 'user_id' => $id);
+                session_start();
+                $_SESSION['user'] = $user;
+                $_SESSION['user']['email'] = $email;
+                $_SESSION['user']['name'] = $name;
+                $_SESSION['user']['user_id'] = $id;
+                header('Location: /index.php');
+            } else {
+                $errors['password'] = "Неверный пароль";
+            }
+        } else { // если email не найден
+            $errors['email'] = "Пользователь с таким email не найден";
+        }
+    }
 
 
     // Если в отправленной форме ошибки -> снова показать форму + ошибки
@@ -88,12 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]
     );
 
-
-    if (empty($errors)) {
-
-// ?????
-
-    }
 } else {
 
     $content = include_template('login_template.php');
@@ -105,7 +90,6 @@ $layout = include_template(
     [
         'content' => $content,
         'categories' => $categories,
-        'is_auth' => $is_auth,
         'user_name' => $user_name,
         'title' => $title
     ]

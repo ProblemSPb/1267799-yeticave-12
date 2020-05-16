@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 require_once('settings.php');
 
 $title = "Вход";
@@ -16,7 +18,6 @@ if (isset($_SESSION['user'])) {
 // получение категорий из БД
 $sql_category = "SELECT id, name, code_name FROM category";
 $categories = sql_query_result($con, $sql_category);
-
 
 $errors = [];
 
@@ -58,9 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $user = array('email' => $email, 'name' => $name, 'user_id' => $id);
                 session_start();
                 $_SESSION['user'] = $user;
-                $_SESSION['user']['email'] = $email;
-                $_SESSION['user']['name'] = $name;
-                $_SESSION['user']['user_id'] = $id;
                 header('Location: /index.php');
             } else {
                 $errors['password'] = "Неверный пароль";
@@ -69,20 +67,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors['email'] = "Пользователь с таким email не найден";
         }
     }
-
-
-    // Если в отправленной форме ошибки -> снова показать форму + ошибки
-    $content = include_template(
-        'login_template.php',
-        [
-            'errors' => $errors
-        ]
-    );
-
-} else {
-
-    $content = include_template('login_template.php');
 }
+
+
+$content = include_template(
+    'login_template.php',
+    [
+        'errors' => $errors
+    ]
+);
 
 // подключение лейаута и контента 
 $layout = include_template(
@@ -97,6 +90,3 @@ $layout = include_template(
 
 print($layout);
 
-
-  ////////// Почему-то не работает, если поле пустое, не выводит валидацию по пустому полю
-  ///////// $con -  подключение к БД недоступно из функции в файле валидации -> пришлось вынести ее в login.php

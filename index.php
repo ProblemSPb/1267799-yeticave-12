@@ -23,7 +23,6 @@ $lots = sql_query_result($con, $sql_lots);
 //подключаем темплейты
 $content = include_template('main.php',
     [
-        //'adverts' => $adverts,
         'lots' => $lots,
         'categories' => $categories
     ]);

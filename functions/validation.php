@@ -6,6 +6,9 @@ function getPostValue($name) {
     return $_POST[$name] ?? "";
 }
 
+function getGetValue($name) {
+    return $_GET[$name] ?? "";
+}
 
 /////////////////////////
 // ФОРМА ДОБАВЛЕНИЯ ЛОТА

@@ -27,18 +27,3 @@ function sql_query_result($db_connect, $sql_query) {
 
     return $sql_resul_array;
 };
-
-// блок тестирования массива данных из БД
-// foreach($lots as $lot){
-//     print($lot['category']);
-// }
-
-
-// блок тестировния подключения
-    // if ($con == false) {
-    //     print("Ошибка подключения: " . mysqli_connect_error());
-    // }
-    // else {
-    //     print("Соединение установлено"); 
-    // }
-    

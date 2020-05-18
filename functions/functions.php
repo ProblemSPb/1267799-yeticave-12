@@ -1,7 +1,8 @@
 <?php
 
 // расчет времени до конца аукциона
-function auction_end($auction_end_date) {
+function auction_end($auction_end_date)
+{
     $time_diff = strtotime($auction_end_date) - time();
     $hours = floor($time_diff / 3600);
     $mins = floor(($time_diff % 3600) / 60);
@@ -10,8 +11,11 @@ function auction_end($auction_end_date) {
 
 };
 
-// функция подключения темплейтов
-function include_template($file_name, $data = array()) {
+/**
+ * Функция подключения темплейтов
+ */
+function include_template($file_name, $data = array())
+{
     $path ='templates/'.$file_name;
     $result = '';
 
@@ -28,8 +32,14 @@ function include_template($file_name, $data = array()) {
 
 };
 
-// форматирование суммы цены
-function price_format($num) {
+/**
+ * Функция форматирования цены
+ * @param $num Число для форматирования
+ * 
+ * @return string Возвращает округленное число с символом рубля
+ */
+function price_format($num)
+{
     $num = ceil($num); // округляем
     if ($num >= 1000) {
         $num = number_format($num, 0, ',', ' '); // форматируем число

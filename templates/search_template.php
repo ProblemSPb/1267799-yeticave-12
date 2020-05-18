@@ -40,11 +40,36 @@
 
   </section>
   <ul class="pagination-list">
-    <li class="pagination-item pagination-item-prev"><a>Назад</a></li>
-    <li class="pagination-item pagination-item-active"><a>1</a></li>
-    <li class="pagination-item"><a href="#">2</a></li>
-    <li class="pagination-item"><a href="#">3</a></li>
-    <li class="pagination-item"><a href="#">4</a></li>
-    <li class="pagination-item pagination-item-next"><a href="#">Вперед</a></li>
+
+    <!-- показывают ссылку НАЗАД, если есть товары на предыдущих страницах -->
+    <!-- если товаров нет, то ссылка скрывается  -->
+    <li class="pagination-item pagination-item-prev"><a href="search.php?search=<?= $search; ?>&page=<?= ($page - 1); ?>"><?= ($page == 1) ? "" : "Назад" ; ?></a></li>
+    
+    <li class="pagination-item pagination-item-active"><a href="search.php?search=<?= $search; ?>&page=<?= ($page); ?>"><?= $page; ?></a></li>
+
+    <!-- следующие три блока показывают ссылки на следующие страницы, если есть товары для отображения -->
+    <!-- если товаров в очереди нет, то ссылки скрываются  -->
+    <?php if(($page) < $pages_total) : ?>
+    <li class="pagination-item"><a href="search.php?search=<?= $search; ?>&page=<?= ($page + 1); ?>"><?= $page + 1; ?></a></li>
+    <?php else : ?>
+    <li class="pagination-item"><a></a></li>
+    <?php endif; ?>
+
+    <?php if(($page+1) < $pages_total) : ?>
+    <li class="pagination-item"><a href="search.php?search=<?= $search; ?>&page=<?= ($page + 2); ?>"><?= $page + 2; ?></a></li>
+    <?php else : ?>
+    <li class="pagination-item"><a></a></li>
+    <?php endif; ?>
+
+    <?php if(($page+2) < $pages_total) : ?>
+    <li class="pagination-item"><a href="search.php?search=<?= $search; ?>&page=<?= ($page + 3); ?>"><?= $page + 3; ?></a></li>
+    <?php else : ?>
+    <li class="pagination-item"><a></a></li>
+    <?php endif; ?>
+    
+    <!-- показывает ссылку ВПЕРЕД, если есть товары на следующих страницах -->
+    <!-- если товаров нет, то ссылка скрывается  -->
+    <li class="pagination-item pagination-item-next"><a href="search.php?search=<?= $search; ?>&page=<?= ($page + 1); ?>"><?= ($page < $pages_total) ? "Вперед" : "" ; ?></a></li>
+    
   </ul>
 </div>

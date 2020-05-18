@@ -26,7 +26,13 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     $search = trim($_GET['search']);
 
     // извлекаем из URL текущую страницу
-    //$page = $_GET['page'];
+    //$page = intval($_GET['page']) ?? 1;
+
+    if(!isset($_GET['page'])) {
+        $page = 1;
+    } else {
+        $page = intval($_GET['page']);
+    }
 
     // если строка запроса непустая
     if(!empty($search)) {
@@ -36,16 +42,12 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $sql_count = sprintf($sql_count_query, $search);
         $result = sql_query_result($con, $sql_count);
         $count = $result[0]['count'];
-
+        
         // количество лотов на странице
-        $num_lot = 9;
+        $limit = 9;
 
         // считаем общее количество страниц
-        $pages_total = intval(($count - 1)/$num_lot) + 1;
-        //echo $pages_total;
-
-        // определяем начало вывода лотов для текущей страницы
-        $page = intval($page);
+        $pages_total = intval(($count - 1)/$limit) + 1;
 
         // если значени $page меньше 1, переходим на первую страницу выдачи результатов поиска
         // а если слишком большое, на последнюю
@@ -56,23 +58,32 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         }
 
         // находим, с какого лота выводить на странице результаты
-        // offset??? 
-
-        // получение соответствующих лотов из БД
-        $sql_format = "SELECT lot.id, lot.name, lot.start_price as price, lot.img_link as url, lot.end_date as expire, category.name as category FROM lot
-                    LEFT JOIN category ON lot.categoryID = category.ID WHERE MATCH(lot.name, lot.description) AGAINST('%s') ORDER BY create_date";
-        $sql_lots = sprintf($sql_format, $search);
-        $lots = sql_query_result($con, $sql_lots);
+        $offset = (intval($page) - 1) * $limit;
 
         // если ничего не найдено
-        if (empty($lots)) {
+        if ($count == 0) {
             $content = include_template('not_found.php');
         } else {
+
+            // получение соответствующих лотов из БД
+            $sql_format =   "SELECT lot.id, lot.name, lot.start_price as price, lot.img_link as url, lot.end_date as expire, category.name as category
+                            FROM lot
+                            LEFT JOIN category ON lot.categoryID = category.ID
+                            WHERE MATCH(lot.name, lot.description) AGAINST('%s')
+                            ORDER BY create_date
+                            LIMIT %d
+                            OFFSET %d";
+            $sql_lots = sprintf($sql_format, $search, $limit, $offset);
+            $lots = sql_query_result($con, $sql_lots);
+
             $content = include_template( // показать лоты
                 'search_template.php',
                 [
                     'lots' => $lots,
-                    'categories' => $categories
+                    'categories' => $categories,
+                    'page' => $page,
+                    'search' => $search,
+                    'pages_total' => $pages_total
                 ]
             );
         }

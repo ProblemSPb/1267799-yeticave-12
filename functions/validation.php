@@ -59,6 +59,18 @@ function validateNum($num) {
 
 }
 
+// проверка сделанной ставки
+function validateBid($num, $minBid) {
+
+    if(!(ctype_digit($num))) {
+        return "Введите целое число больше 0";
+    }
+
+    if($num < $minBid) {
+        return "Ставка должна быть не меньше минимальной";
+    }
+}
+
 // проверка картинки
 function validateImg() {
 

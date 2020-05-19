@@ -1,24 +1,26 @@
 <?php
 
+session_start();
+
 require_once('settings.php');
 
 $title = 'Регистрация';
 
-$is_auth = "";
-if($is_auth == 1) {
+// если пользователь уже залогинен
+if (isset($_SESSION['user'])) {
     header("Location: index.php");
-}
-$user_name = 'Lena';
+    exit();
+} 
 
 // получение категорий из БД
 $sql_category = "SELECT id, name, code_name FROM category";
 $categories = sql_query_result($con, $sql_category);
 
+$errors = [];
+
 // если форма отправлена
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  
-    $errors = [];
-
     // применение правил проверок
     $rules = [
         'email' => function() {
@@ -54,18 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['email'] = "Пользователь с таким email уже существует";
     }
 
-
      // финальный массив с ошибками
      $errors = array_filter($errors);
 
-    // Если в отправленной форме ошибки -> снова показать форму + ошибки
-    $content = include_template('sign_up_templ.php', 
-        [
-            'errors' => $errors
-        ]
-    );
-
-    // если ошибок нет, записать ЛОТ в БД
+    // если ошибок нет, записать юзера в БД
     if(empty($errors)) {
 
         // запись данных из формы в БД -> таблица user 
@@ -76,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
 
         if($stmt_result) {
-            // переадресация на страницу созданного лота
+            // переадресация на страницу логина
             header("Location: /login.php");
         } else {
             print(mysqli_error($con));
@@ -85,19 +79,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $con->close();
     }
 
-} else {
-
-    $content = include_template('sign_up_templ.php');
-
 }
+
+$content = include_template('sign_up_templ.php', 
+    [
+        'errors' => $errors
+    ]
+);
 
 // подключение лейаута и контента 
 $layout = include_template('page_layout.php', 
 [
     'content' => $content,
     'categories' => $categories,
-    'is_auth' => $is_auth,
-    'user_name' => $user_name,
     'title' => $title
 ]);
 

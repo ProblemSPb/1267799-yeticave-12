@@ -1,7 +1,6 @@
 <?php
 
 
-
 //сохранение значений полей
 function getPostValue($name) {
     return $_POST[$name] ?? "";
@@ -140,19 +139,6 @@ function validateEmail($email) {
     if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return "Введите корректный email";
     }
-
-    // // проверка если такой email уже зарегестрирован
-    // $stmt = $con->prepare("SELECT id FROM user WHERE email = ?");
-    // $stmt->bind_param("s", $email);
-    // $stmt_result = $stmt->execute();
-    // $stmt->close();
-
-    // if($stmt_result) {
-    //     return "Пользователь с таким email уже существует";
-    // }
-
-    // $con->close();
-
 }
 
 // валидация пароля
@@ -174,5 +160,3 @@ function validatePass($pass) {
     }
 }
 
-// валидация имени и валидацию контакта
-// использовать validateText

@@ -1,12 +1,15 @@
 <?php
+session_start();
 
 require_once('settings.php');
 
-
-$is_auth = rand(0, 1);
-$user_name = 'Lena'; // укажите здесь ваше имя
 $title = 'YetiCave';
 
+if (isset($_SESSION['user'])) {
+    $user_name = $_SESSION['user']['name'];
+} else {
+    $user_name = "";
+}
 
 // получение категорий из БД
 $sql_category = "SELECT id, name, code_name FROM category";
@@ -30,7 +33,6 @@ $layout = include_template('layout.php',
         'content' => $content,
         'title' => 'YetiCave',
         'user_name' => $user_name,
-        'is_auth' => $is_auth,
         'categories' => $categories
     ]);
 

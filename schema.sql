@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS lot (
     end_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     bid_step DECIMAL(8,2) NOT NULL,
     userID INT NOT NULL,
-    winnerID INT NOT NULL,
+    winnerID INT,
     categoryID INT NOT NULL,
     ## связи
     FOREIGN KEY (userID) REFERENCES user (id),

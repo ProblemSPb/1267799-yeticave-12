@@ -23,15 +23,29 @@ if (isset($_GET['id'])) {
 
     $errors = [];
 
-    // проверяем, если запрошенный id лота существует в БД
+    // данные по лоту 
     $sql_format = "SELECT lot.*, category.name as 'category name' FROM lot  INNER JOIN category on lot.categoryID = category.ID WHERE lot.id = %d";
     $sql_lot = sprintf($sql_format, $id);
-
-    // данные по лоту 
     $lot_data = sql_query_result($con, $sql_lot);
 
-    /////// ФОРМА СТАВКИ
+    // данные по ставкам
+    $sql_bids_format = "SELECT bid.*, user.name FROM bid LEFT JOIN user on bid.userID = user.id WHERE bid.lotID = %d ORDER BY bid.bid_date DESC";
+    $sql_bids = sprintf($sql_bids_format, $id); 
+    $bids_data = sql_query_result($con, $sql_bids);
 
+
+    // если ставок на лот не было, то по дифолту это изначальная цена
+    $sql_last_bid_format = "SELECT sum_price FROM bid WHERE lotID = %d ORDER BY id DESC LIMIT 1";
+    $sql_last_bid = sprintf($sql_last_bid_format, $id); 
+    $last_bid_result = sql_query_result($con, $sql_last_bid);
+
+    if(empty($last_bid_result)) {
+        $last_bid = $lot_data[0]['start_price'];
+    } else {
+        $last_bid = $last_bid_result[0]['sum_price'];
+    }
+
+    /////// ФОРМА СТАВКИ
     // ЕСЛИ ПОЛЬЗОВАТЕЛЬ ЗАЛОГИНЕН
     if (isset($_SESSION['user'])) {
         $user_name = strip_tags($_SESSION['user']['name']);
@@ -48,7 +62,7 @@ if (isset($_GET['id'])) {
             if (empty($errors)) {
 
                 // посчитать общую стоимость вмместе с новой ставкой
-                $sum_price = $_POST['cost'] + $lot_data[0]['start_price'];
+                $sum_price = $_POST['cost'] + $last_bid;
 
                 //запись данных из формы в БД -> таблица bid 
                 $stmt = $con->prepare("INSERT INTO bid (bid_date, sum_price, userID, lotID) VALUES (NOW(), ?, ?, ?)");
@@ -56,19 +70,17 @@ if (isset($_GET['id'])) {
                 $stmt_result = $stmt->execute();
                 $stmt->close();
 
-                if ($stmt_result) {
-                    // TO DO
-                    echo "запись сделана";
-                } else {
+                if (!$stmt_result) {
                     print(mysqli_error($con));
                 }
 
                 $con->close();
-
-                echo "OK";
             } else {
                 echo $errors['cost'];
             }
+
+            // переадресация на обновленную страницу с добавленной новой ставкой и новой ценой
+            header("Location: lot.php?id=$id");
         }
     }
 
@@ -79,7 +91,9 @@ if (isset($_GET['id'])) {
             'lot_template.php',
             [
                 'lot' => $lot_data[0],
-                'errors' => $errors
+                'errors' => $errors,
+                'bids' => $bids_data,
+                'last_bid' => $last_bid
             ]
         );
         $title = $lot_data[0]['name'];

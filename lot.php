@@ -15,13 +15,12 @@ $user_name = "";
 $sql_category = "SELECT id, name, code_name FROM category";
 $categories = sql_query_result($con, $sql_category);
 
+$errors = [];
 
 //проверка параметра из строки запроса
 if (isset($_GET['id'])) {
 
     $id = intval($_GET['id']);
-
-    $errors = [];
 
     // данные по лоту 
     $sql_format = "SELECT lot.*, category.name as 'category name' FROM lot  INNER JOIN category on lot.categoryID = category.ID WHERE lot.id = %d";
@@ -30,16 +29,16 @@ if (isset($_GET['id'])) {
 
     // данные по ставкам
     $sql_bids_format = "SELECT bid.*, user.name FROM bid LEFT JOIN user on bid.userID = user.id WHERE bid.lotID = %d ORDER BY bid.bid_date DESC";
-    $sql_bids = sprintf($sql_bids_format, $id); 
+    $sql_bids = sprintf($sql_bids_format, $id);
     $bids_data = sql_query_result($con, $sql_bids);
 
 
     // если ставок на лот не было, то по дифолту это изначальная цена
     $sql_last_bid_format = "SELECT sum_price FROM bid WHERE lotID = %d ORDER BY id DESC LIMIT 1";
-    $sql_last_bid = sprintf($sql_last_bid_format, $id); 
+    $sql_last_bid = sprintf($sql_last_bid_format, $id);
     $last_bid_result = sql_query_result($con, $sql_last_bid);
 
-    if(empty($last_bid_result)) {
+    if (empty($last_bid_result)) {
         $last_bid = $lot_data[0]['start_price'];
     } else {
         $last_bid = $last_bid_result[0]['sum_price'];
@@ -70,17 +69,16 @@ if (isset($_GET['id'])) {
                 $stmt_result = $stmt->execute();
                 $stmt->close();
 
+
+                // переадресация на обновленную страницу с добавленной новой ставкой и новой ценой
+                header("Location: lot.php?id=$id");
+
                 if (!$stmt_result) {
                     print(mysqli_error($con));
                 }
 
                 $con->close();
-            } else {
-                echo $errors['cost'];
-            }
-
-            // переадресация на обновленную страницу с добавленной новой ставкой и новой ценой
-            header("Location: lot.php?id=$id");
+            } 
         }
     }
 
@@ -97,9 +95,6 @@ if (isset($_GET['id'])) {
             ]
         );
         $title = $lot_data[0]['name'];
-
-
-        /////////
 
     } else {
         $content = include_template('404.php');

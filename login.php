@@ -5,14 +5,13 @@ session_start();
 require_once('settings.php');
 
 $title = "Вход";
+$user_name = "";
 
 // если пользователь уже залогинен
 if (isset($_SESSION['user'])) {
     $user_name = strip_tags($_SESSION['user']['name']);
     header("Location: index.php");
     exit();
-} else {
-    $user_name = "";
 }
 
 // получение категорий из БД
@@ -45,7 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = array_filter($errors);
 
     if (empty($errors)) {
-
         // Сравнить введенные имейл и пароль с БД
         $stmt = $con->prepare("SELECT password, name, email, id FROM user WHERE email = ? LIMIT 1");
         $stmt->bind_param("s", $_POST['email']);
@@ -55,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // если email найден
         if (mysqli_stmt_fetch($stmt)) {
             if (password_verify($_POST['password'], $password)) { // проверка пароля
-                
+
                 $user = array('email' => $email, 'name' => $name, 'user_id' => $id);
                 session_start();
                 $_SESSION['user'] = $user;
@@ -68,7 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-
 
 $content = include_template(
     'login_template.php',
@@ -89,4 +86,3 @@ $layout = include_template(
 );
 
 print($layout);
-

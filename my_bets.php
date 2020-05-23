@@ -11,13 +11,10 @@ $user_name = "";
 $sql_category = "SELECT id, name, code_name FROM category";
 $categories = sql_query_result($con, $sql_category);
 
-
 // ЕСЛИ ПОЛЬЗОВАТЕЛЬ ЗАЛОГИНЕН
 if (isset($_SESSION['user'])) {
     $user_name = strip_tags($_SESSION['user']['name']);
     $user_id = $_SESSION['user']['user_id'];
-
-
 } else {  // ЕСЛИ ПОЛЬЗОВАТЕЛЬ НЕ ЗАЛОГИНЕН
     header("Location: index.php");
     exit();
@@ -37,7 +34,8 @@ $sql_format =   "SELECT bid.bid_date as bid_date, bid.sum_price, bid.userID as b
 $sql_bids = sprintf($sql_format, $_SESSION['user']['user_id']);
 $bids = sql_query_result($con, $sql_bids);
 
-$content = include_template('my_bets_template.php',
+$content = include_template(
+    'my_bets_template.php',
     [
         'bids' => $bids,
         'user_id' => $user_id

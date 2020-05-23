@@ -3,7 +3,6 @@
 require_once('settings.php');
 require_once "vendor/autoload.php";
 
-
 // получение лотов без победителей, дата истечения которых <= сейчас
 $sql_lots_wo_winner = "SELECT lot.id as lot_id, lot.name as lot_name, user.email as winner_email, user.name as winner_name, user.id as winner_id
                     FROM lot
@@ -24,7 +23,6 @@ foreach ($lots_wo_winner as $key => $value) {
 
     // если запись победителей прошла успешно, отправляем имейлы
     if ($update_winner) {
-
         // подключаем email темплейт
         $content = include_template(
             'email.php',
@@ -50,6 +48,5 @@ foreach ($lots_wo_winner as $key => $value) {
         // Отправка сообщения
         $mailer = new Swift_Mailer($transport);
         $mailer->send($message);
-
     }
 }

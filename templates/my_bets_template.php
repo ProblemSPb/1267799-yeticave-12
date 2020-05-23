@@ -23,14 +23,15 @@
       <tr class="rates__item <?= $tr_class_rates_timer; ?>">
         <td class="rates__info">
           <div class="rates__img">
-            <img src="<?= strip_tags($value['url']); ?>" width="54" height="40" alt="Сноуборд">
+            <img src="<?= strip_tags($value['url']); ?>" width="54" height="40" alt="<?= strip_tags($value['name']); ?>">
           </div>
+          <div>
           <h3 class="rates__title"><a href="lot.php?id=<?= $value['id'] ?>"><?= strip_tags($value['name']); ?></a></h3>
 
           <?php if (isWinner($value['winner'], $user_id)) : ?>
             <p><?= strip_tags($value['user_contact']); ?></p>
           <?php endif; ?>
-
+          </div>
         </td>
         <td class="rates__category">
           <?= strip_tags($value['category']); ?>

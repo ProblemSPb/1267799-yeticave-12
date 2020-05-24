@@ -17,7 +17,7 @@ $sql_category = "SELECT id, name, code_name FROM category";
 $categories = sql_query_result($con, $sql_category);
 
 $lots = [];
-$content;
+$content = include_template('not_found_category.php');
 
 // если отправлен запрос на лоты из выбранной категории
 if ($_SERVER["REQUEST_METHOD"] === "GET") {

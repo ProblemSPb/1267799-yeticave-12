@@ -2,7 +2,7 @@
 
 require_once('settings.php');
 require_once "vendor/autoload.php";
-
+/*
 // получение лотов без победителей, дата истечения которых <= сейчас
 $sql_lots_wo_winner = "SELECT lot.id as lot_id, lot.name as lot_name, user.email as winner_email, user.name as winner_name, user.id as winner_id
                     FROM lot
@@ -47,22 +47,27 @@ foreach ($lots_wo_winner as $key => $value) {
         $mailer->send($message);
     }
 }
+*/
 
+// Конфигурация транспорта
+$transport = (new Swift_SmtpTransport('phpdemo.ru', 25))
+    ->setUsername('keks@phpdemo.ru')
+    ->setPassword('htmlacademy')
+    ->setEncryption(null);
 
-// // Конфигурация транспорта
-// $transport = (new Swift_SmtpTransport('phpdemo.ru', 25))
-//     ->setUsername('keks@phpdemo.ru')
-//     ->setPassword('htmlacademy')
-//     ->setEncryption(null);
+// Create a message
+$message = new Swift_Message("Ваша ставка победила");
+$message->setTo(['ussr83@mail.ru' => 'ussr83@mail.ru']);
+$message->setBody('Тестовый текст письма', "text/html");
+$message->setFrom(["keks@phpdemo.ru" => 'YetiCave']);
 
-// // Create the Mailer using your created Transport
-// $mailer = new Swift_Mailer($transport);
+// Create the Mailer using your created Transport
+$mailer = new Swift_Mailer($transport);
 
-// // Create a message
-// $message = (new Swift_Message('Wonderful Subject'))
-//     ->setFrom(['ussr83@mail.ru' => 'Mail'])
-//     ->setTo(['ussr83@mail.ru' => 'A name'])
-//     ->setBody('Here is the message itself');
+$logger = new Swift_Plugins_Loggers_EchoLogger();
+$mailer ->registerPlugin(new Swift_Plugins_LoggerPlagin($logger));
 
-// // Send the message
-// $result = $mailer->send($message);
+// Send the message
+$mailer->send($message);
+
+echo $logger->dump();

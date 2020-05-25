@@ -24,7 +24,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     $id = intval($_GET['id']);
 
     // данные по лоту 
-    $sql_format = "SELECT lot.*, category.name as 'category name' FROM lot  INNER JOIN category on lot.categoryID = category.ID WHERE lot.id = %d AND lot.end_date > NOW()";
+    $sql_format = "SELECT lot.*, category.name as 'category name' FROM lot  INNER JOIN category on lot.categoryID = category.ID WHERE lot.id = %d";
     $sql_lot = sprintf($sql_format, $id);
     $lot_data = sql_query_result($con, $sql_lot);
 
@@ -32,10 +32,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     $sql_bids_format = "SELECT bid.*, user.name FROM bid LEFT JOIN user on bid.userID = user.id WHERE bid.lotID = %d ORDER BY bid.bid_date DESC";
     $sql_bids = sprintf($sql_bids_format, $id);
     $bids_data = sql_query_result($con, $sql_bids);
-
-    // считаем количество ставок по лоту
-    $result = mysqli_query($con, $sql_bids);
-    $num_rows = mysqli_num_rows($result);
 
     // если существует -> показать лот
     // если нет -> 404
@@ -55,16 +51,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
             // получение ID пользователя, который сделал последнюю ставку на текущий момент
             $last_bid_user =  $last_bid_result[0]['userID'];
-        }
-
-        // определяем, закончился ли аукцион для товара
-        // если да, меняем значение статуса на true
-        $auc_end_status = false;
-        $today = new DateTime();
-        $lot_end = new DateTime($lot_data[0]['end_date']);
-
-        if ($lot_end < $today) {
-            $auc_end_status = true;
         }
 
         // ФОРМА СТАВКИ ЕСЛИ ПОЛЬЗОВАТЕЛЬ ЗАЛОГИНЕН
@@ -105,9 +91,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                 'errors' => $errors,
                 'bids' => $bids_data,
                 'last_bid' => $last_bid,
-                'num_rows' => $num_rows,
-                'last_bid_user' => $last_bid_user,
-                'auc_end_status' => $auc_end_status
+                'last_bid_user' => $last_bid_user
             ]
         );
         $title = $lot_data[0]['name'];

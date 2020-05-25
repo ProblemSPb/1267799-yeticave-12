@@ -22,7 +22,7 @@ $content = include_template('not_found_category.php');
 // если отправлен запрос на лоты из выбранной категории
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
-    $categoryID = trim($_GET['category']);
+    $categoryID = intval($_GET['category']);
 
     // извлекаем из URL текущую страницу
     if (!isset($_GET['page'])) {
@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     }
 
     // если строка запроса непустая
-    if (!empty($categoryID)) {
+    if ($categoryID > 0) {
 
         // получаем название категории
         $sql_category = "SELECT name FROM category WHERE id = %d";
@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $category_name = $result[0]['name'];
 
         //считаем количество записей по запросу
-        $sql_count_query = "SELECT COUNT(id) as count FROM lot WHERE categoryID = %d";
+        $sql_count_query = "SELECT COUNT(id) as count FROM lot WHERE categoryID = %d AND lot.end_date > NOW()";
         $sql_count = sprintf($sql_count_query, $categoryID);
         $result = sql_query_result($con, $sql_count);
         $count = $result[0]['count'];

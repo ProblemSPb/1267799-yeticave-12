@@ -19,7 +19,8 @@ $content = include_template('404.php');
 $title = '404 Страница не найдена';
 
 //проверка параметра из строки запроса
-if (isset($_GET['id'])) {
+if ($_GET['id'] > 0) {
+
 
     $id = intval($_GET['id']);
 

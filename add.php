@@ -10,6 +10,7 @@ $user_name = "";
 // получение категорий из БД
 $sql_category = "SELECT id, name, code_name FROM category";
 $categories = sql_query_result($con, $sql_category);
+$content = include_template('403.php'); 
 
 $errors = [];
 
@@ -100,12 +101,6 @@ if (isset($_SESSION['user'])) {
         ]
     );
 }
-
-else {  // ЕСЛИ ПОЛЬЗОВАТЕЛЬ НЕ ЗАЛОГИНЕН
-    $content = include_template('403.php'); 
-    $title = '403 Страница не найдена';
-}
-
 
 // подключение лейаута и контента 
 $layout = include_template(

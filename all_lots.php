@@ -4,7 +4,7 @@ session_start();
 
 require_once('settings.php');
 
-$title = "Результаты поиска";
+$title = "Все лоты категории";
 $user_name = "";
 
 // если пользователь уже залогинен
@@ -17,14 +17,12 @@ $sql_category = "SELECT id, name, code_name FROM category";
 $categories = sql_query_result($con, $sql_category);
 
 $lots = [];
-$not_found = "";
+$content = include_template('not_found_category.php');
 
-$content = include_template('not_found.php');
-
-// если отправлен запрос на поиск
+// если отправлен запрос на лоты из выбранной категории
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
-    $search = trim($_GET['search']);
+    $categoryID = intval($_GET['category']);
 
     // извлекаем из URL текущую страницу
     if (!isset($_GET['page'])) {
@@ -34,11 +32,17 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     }
 
     // если строка запроса непустая
-    if (!empty($search)) {
+    if ($categoryID > 0) {
+
+        // получаем название категории
+        $sql_category = "SELECT name FROM category WHERE id = %d";
+        $sql_category_value = sprintf($sql_category, $categoryID);
+        $result = sql_query_result($con, $sql_category_value);
+        $category_name = $result[0]['name'];
 
         //считаем количество записей по запросу
-        $sql_count_query = "SELECT COUNT(id) as count FROM lot WHERE MATCH(lot.name, lot.description) AGAINST('%s') AND lot.end_date > NOW()";
-        $sql_count = sprintf($sql_count_query, $search);
+        $sql_count_query = "SELECT COUNT(id) as count FROM lot WHERE categoryID = %d AND lot.end_date > NOW()";
+        $sql_count = sprintf($sql_count_query, $categoryID);
         $result = sql_query_result($con, $sql_count);
         $count = $result[0]['count'];
 
@@ -59,27 +63,27 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         // находим, с какого лота выводить на странице результаты
         $offset = (intval($page) - 1) * $limit;
 
-        // если ничего не найдено
+        // если что-то найдено
         if (!$count == 0) {
             // получение соответствующих лотов из БД
             $sql_format =   "SELECT lot.id, lot.name, lot.start_price as price, lot.img_link as url, lot.end_date as expire, category.name as category
                             FROM lot
                             LEFT JOIN category ON lot.categoryID = category.ID
-                            WHERE MATCH(lot.name, lot.description) AGAINST('%s')
+                            WHERE categoryID = %d
                             AND lot.end_date > NOW()
                             ORDER BY create_date
                             LIMIT %d
                             OFFSET %d";
-            $sql_lots = sprintf($sql_format, $search, $limit, $offset);
+            $sql_lots = sprintf($sql_format, $categoryID, $limit, $offset);
             $lots = sql_query_result($con, $sql_lots);
 
             $content = include_template( // показать лоты
-                'search_template.php',
+                'category_lots_template.php',
                 [
                     'lots' => $lots,
                     'categories' => $categories,
                     'page' => $page,
-                    'search' => $search,
+                    'category' => $category_name,
                     'pages_total' => $pages_total
                 ]
             );

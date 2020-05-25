@@ -61,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // если ошибок нет, записать юзера в БД
     if(empty($errors)) {
-
         // запись данных из формы в БД -> таблица user 
         $hashed_pass = password_hash($_POST['password'], PASSWORD_DEFAULT);
         $stmt = $con->prepare("INSERT INTO user (register_date, email, name, password, user_contact) VALUES (NOW(), ?, ?, ?, ?)");

@@ -1,0 +1,12 @@
+{
+    "name": "admin/yeticave",
+    "authors": [
+        {
+            "name": "ProblemSPb",
+            "email": "ussr83@mail.ru"
+        }
+    ],
+    "require": {
+        "swiftmailer/swiftmailer": "^6.0"
+    }
+}

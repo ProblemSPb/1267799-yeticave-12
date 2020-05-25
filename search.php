@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     if (!empty($search)) {
 
         //считаем количество записей по запросу
-        $sql_count_query = "SELECT COUNT(id) as count FROM lot WHERE MATCH(lot.name, lot.description) AGAINST('%s')";
+        $sql_count_query = "SELECT COUNT(id) as count FROM lot WHERE MATCH(lot.name, lot.description) AGAINST('%s') AND lot.end_date > NOW()";
         $sql_count = sprintf($sql_count_query, $search);
         $result = sql_query_result($con, $sql_count);
         $count = $result[0]['count'];
@@ -66,6 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                             FROM lot
                             LEFT JOIN category ON lot.categoryID = category.ID
                             WHERE MATCH(lot.name, lot.description) AGAINST('%s')
+                            AND lot.end_date > NOW()
                             ORDER BY create_date
                             LIMIT %d
                             OFFSET %d";

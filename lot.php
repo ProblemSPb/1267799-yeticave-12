@@ -19,13 +19,12 @@ $content = include_template('404.php');
 $title = '404 Страница не найдена';
 
 //проверка параметра из строки запроса
-if ($_GET['id'] > 0) {
-
+if (isset($_GET['id']) && $_GET['id'] > 0) {
 
     $id = intval($_GET['id']);
 
     // данные по лоту 
-    $sql_format = "SELECT lot.*, category.name as 'category name' FROM lot  INNER JOIN category on lot.categoryID = category.ID WHERE lot.id = %d";
+    $sql_format = "SELECT lot.*, category.name as 'category name' FROM lot  INNER JOIN category on lot.categoryID = category.ID WHERE lot.id = %d AND lot.end_date > NOW()";
     $sql_lot = sprintf($sql_format, $id);
     $lot_data = sql_query_result($con, $sql_lot);
 
@@ -47,14 +46,16 @@ if ($_GET['id'] > 0) {
         $sql_last_bid = sprintf($sql_last_bid_format, $id);
         $last_bid_result = sql_query_result($con, $sql_last_bid);
 
+        $last_bid_user =  0;
+
         if (empty($last_bid_result)) {
             $last_bid = $lot_data[0]['start_price'];
         } else {
             $last_bid = $last_bid_result[0]['sum_price'];
-        }
 
-        // получение ID пользователя, который сделал последнюю ставку на текущий момент
-        $last_bid_user =  $last_bid_result[0]['userID'];
+            // получение ID пользователя, который сделал последнюю ставку на текущий момент
+            $last_bid_user =  $last_bid_result[0]['userID'];
+        }
 
         // определяем, закончился ли аукцион для товара
         // если да, меняем значение статуса на true
@@ -65,7 +66,6 @@ if ($_GET['id'] > 0) {
         if ($lot_end < $today) {
             $auc_end_status = true;
         }
-        
 
         // ФОРМА СТАВКИ ЕСЛИ ПОЛЬЗОВАТЕЛЬ ЗАЛОГИНЕН
         if (isset($_SESSION['user']) && $_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -70,6 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                             FROM lot
                             LEFT JOIN category ON lot.categoryID = category.ID
                             WHERE categoryID = %d
+                            AND lot.end_date > NOW()
                             ORDER BY create_date
                             LIMIT %d
                             OFFSET %d";

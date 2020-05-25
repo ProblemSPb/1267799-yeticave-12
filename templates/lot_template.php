@@ -37,7 +37,9 @@
                         Мин. ставка <span><?= price_format($lot['bid_step']); ?></span>
                     </div>
                 </div>
-                <?php if (isset($_SESSION['user'])) : ?>
+                <!-- Поле ставки не отобразится, если пользователь не залогинен -->
+                <!-- А также, если это лот пользователя, если время аукциона истекло, если последняя ставка принадлежит этому пользователю -->
+                <?php if (isset($_SESSION['user']) && ($_SESSION['user']['user_id'] != $lot['userID']) && ($_SESSION['user']['user_id'] != $last_bid_user) && ($auc_end_status != true)) : ?>
                 <form class="lot-item__form" action="lot.php?id=<?= $lot['id']; ?>" method="post" autocomplete="off">
                     <p class="lot-item__form-item form__item <?php if (count($errors)) : ?> form__item--invalid <?php endif; ?>">
                         <label for="cost">Ваша ставка</label>

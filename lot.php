@@ -42,7 +42,7 @@ if (isset($_GET['id'])) {
     if ($lot_data != null) {
 
         // если ставок на лот не было, то по дифолту это изначальная цена
-        $sql_last_bid_format = "SELECT sum_price FROM bid WHERE lotID = %d ORDER BY id DESC LIMIT 1";
+        $sql_last_bid_format = "SELECT sum_price, userID FROM bid WHERE lotID = %d ORDER BY id DESC LIMIT 1";
         $sql_last_bid = sprintf($sql_last_bid_format, $id);
         $last_bid_result = sql_query_result($con, $sql_last_bid);
 
@@ -51,6 +51,20 @@ if (isset($_GET['id'])) {
         } else {
             $last_bid = $last_bid_result[0]['sum_price'];
         }
+
+        // получение ID пользователя, который сделал последнюю ставку на текущий момент
+        $last_bid_user =  $last_bid_result[0]['userID'];
+
+        // определяем, закончился ли аукцион для товара
+        // если да, меняем значение статуса на true
+        $auc_end_status = false;
+        $today = new DateTime();
+        $lot_end = new DateTime($lot_data[0]['end_date']);
+
+        if ($lot_end < $today) {
+            $auc_end_status = true;
+        }
+        
 
         // ФОРМА СТАВКИ ЕСЛИ ПОЛЬЗОВАТЕЛЬ ЗАЛОГИНЕН
         if (isset($_SESSION['user']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -90,7 +104,9 @@ if (isset($_GET['id'])) {
                 'errors' => $errors,
                 'bids' => $bids_data,
                 'last_bid' => $last_bid,
-                'num_rows' => $num_rows
+                'num_rows' => $num_rows,
+                'last_bid_user' => $last_bid_user,
+                'auc_end_status' => $auc_end_status
             ]
         );
         $title = $lot_data[0]['name'];

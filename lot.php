@@ -52,13 +52,11 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0) {
         $sql_last_bid = sprintf($sql_last_bid_format, $id);
         $last_bid_result = sql_query_result($con, $sql_last_bid);
 
+        $last_bid = $lot_data[0]['start_price'];
         $last_bid_user =  0;
 
-        if (empty($last_bid_result)) {
-            $last_bid = $lot_data[0]['start_price'];
-        } else {
+        if (!empty($last_bid_result)) {
             $last_bid = $last_bid_result[0]['sum_price'];
-
             // получение ID пользователя, который сделал последнюю ставку на текущий момент
             $last_bid_user =  $last_bid_result[0]['userID'];
         }

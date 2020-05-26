@@ -41,7 +41,7 @@
           <div class="timer <?= $td_class_timer; ?>"><?= $timer_value; ?></div>
         </td>
         <td class="rates__price">
-          <?= price_format($value['sum_price']); ?>
+          <?= htmlspecialchars(price_format($value['sum_price'])); ?>
         </td>
         <td class="rates__time">
           <?= compareDates($value['bid_date']); ?>

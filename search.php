@@ -36,11 +36,16 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     // если строка запроса непустая
     if (!empty($search)) {
 
-        //считаем количество записей по запросу
-        $sql_count_query = "SELECT COUNT(id) as count FROM lot WHERE MATCH(lot.name, lot.description) AGAINST('%s') AND lot.end_date > NOW()";
-        $sql_count = sprintf($sql_count_query, $search);
-        $result = sql_query_result($con, $sql_count);
-        $count = $result[0]['count'];
+        // считаем количество записей по запросу
+        $stmt_count = $con->prepare("SELECT COUNT(id) as count FROM lot WHERE MATCH(lot.name, lot.description) AGAINST(?) AND lot.end_date > NOW()");
+        $stmt_count->bind_param("s", $search);
+        $stmt_count->execute();
+
+        $result_count = $stmt_count->get_result();
+        $all_rows = $result_count->fetch_all(MYSQLI_ASSOC);
+        $count = $all_rows[0]['count'];
+        $stmt_count->close();
+
 
         // количество лотов на странице
         $limit = 9;
@@ -61,17 +66,23 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
         // если ничего не найдено
         if (!$count == 0) {
+
             // получение соответствующих лотов из БД
-            $sql_format =   "SELECT lot.id, lot.name, lot.start_price as price, lot.img_link as url, lot.end_date as expire, category.name as category
-                            FROM lot
-                            LEFT JOIN category ON lot.categoryID = category.ID
-                            WHERE MATCH(lot.name, lot.description) AGAINST('%s')
-                            AND lot.end_date > NOW()
-                            ORDER BY create_date
-                            LIMIT %d
-                            OFFSET %d";
-            $sql_lots = sprintf($sql_format, $search, $limit, $offset);
-            $lots = sql_query_result($con, $sql_lots);
+            $stmt = $con->prepare("SELECT lot.id, lot.name, lot.start_price as price, lot.img_link as url, lot.end_date as expire, category.name as category
+                                FROM lot
+                                LEFT JOIN category ON lot.categoryID = category.ID
+                                WHERE MATCH(lot.name, lot.description) AGAINST(?)
+                                AND lot.end_date > NOW()
+                                ORDER BY create_date
+                                LIMIT ?
+                                OFFSET ?");
+            $stmt->bind_param("sii", $search, $limit, $offset);
+            $stmt->execute();
+
+            $result = $stmt->get_result();
+            $all_rows = $result->fetch_all(MYSQLI_ASSOC);
+            $lots = $all_rows;
+            $stmt->close();
 
             $content = include_template( // показать лоты
                 'search_template.php',

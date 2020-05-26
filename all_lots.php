@@ -34,17 +34,25 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     // если строка запроса непустая
     if ($categoryID > 0) {
 
-        // получаем название категории
-        $sql_category = "SELECT name FROM category WHERE id = %d";
-        $sql_category_value = sprintf($sql_category, $categoryID);
-        $result = sql_query_result($con, $sql_category_value);
-        $category_name = $result[0]['name'];
+        //получаем название категории
+        $stmt = $con->prepare("SELECT name FROM category WHERE id = ?");
+        $stmt->bind_param("i", $categoryID);
+        $stmt->execute();
 
-        //считаем количество записей по запросу
-        $sql_count_query = "SELECT COUNT(id) as count FROM lot WHERE categoryID = %d AND lot.end_date > NOW()";
-        $sql_count = sprintf($sql_count_query, $categoryID);
-        $result = sql_query_result($con, $sql_count);
-        $count = $result[0]['count'];
+        $result = $stmt->get_result();
+        $all_rows = $result->fetch_all(MYSQLI_ASSOC);
+        $category_name = $all_rows[0]['name'];
+        $stmt->close();
+
+        //получаем количество записей по запросу
+        $stmt_count = $con->prepare("SELECT COUNT(id) as count FROM lot WHERE categoryID = ? AND lot.end_date > NOW()");
+        $stmt_count->bind_param("i", $categoryID);
+        $stmt_count->execute();
+
+        $result_count = $stmt_count->get_result();
+        $all_rows = $result_count->fetch_all(MYSQLI_ASSOC);
+        $count = $all_rows[0]['count'];
+        $stmt_count->close();
 
         // количество лотов на странице
         $limit = 9;
@@ -65,17 +73,23 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
         // если что-то найдено
         if (!$count == 0) {
+
             // получение соответствующих лотов из БД
-            $sql_format =   "SELECT lot.id, lot.name, lot.start_price as price, lot.img_link as url, lot.end_date as expire, category.name as category
-                            FROM lot
-                            LEFT JOIN category ON lot.categoryID = category.ID
-                            WHERE categoryID = %d
-                            AND lot.end_date > NOW()
-                            ORDER BY create_date
-                            LIMIT %d
-                            OFFSET %d";
-            $sql_lots = sprintf($sql_format, $categoryID, $limit, $offset);
-            $lots = sql_query_result($con, $sql_lots);
+            $stmt = $con->prepare("SELECT lot.id, lot.name, lot.start_price as price, lot.img_link as url, lot.end_date as expire, category.name as category
+                        FROM lot
+                        LEFT JOIN category ON lot.categoryID = category.ID
+                        WHERE categoryID = ?
+                        AND lot.end_date > NOW()
+                        ORDER BY create_date
+                        LIMIT ?
+                        OFFSET ?");
+            $stmt->bind_param("iii", $categoryID, $limit, $offset);
+            $stmt->execute();
+
+            $result = $stmt->get_result();
+            $all_rows = $result->fetch_all(MYSQLI_ASSOC);
+            $lots = $all_rows;
+            $stmt->close();
 
             $content = include_template( // показать лоты
                 'category_lots_template.php',

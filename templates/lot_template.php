@@ -3,10 +3,10 @@
     <div class="lot-item__content">
         <div class="lot-item__left">
             <div class="lot-item__image">
-                <img src=<?= $lot['img_link']; ?> width="730" height="548" alt=<?= $lot['category name']; ?>>
+                <img src=<?= htmlspecialchars($lot['img_link']); ?> width="730" height="548" alt=<?= htmlspecialchars($lot['category name']); ?>>
             </div>
-            <p class="lot-item__category">Категория: <span><?= $lot['category name']; ?></span></p>
-            <p class="lot-item__description"><?= $lot['description']; ?></p>
+            <p class="lot-item__category">Категория: <span><?= htmlspecialchars($lot['category name']); ?></span></p>
+            <p class="lot-item__description"><?= htmlspecialchars($lot['description']); ?></p>
         </div>
 
         <div class="lot-item__right">
@@ -31,10 +31,10 @@
                 <div class="lot-item__cost-state">
                     <div class="lot-item__rate">
                         <span class="lot-item__amount">Текущая цена</span>
-                        <span class="lot-item__cost"><?= price_format($last_bid); ?></span>
+                        <span class="lot-item__cost"><?= htmlspecialchars(price_format($last_bid)); ?></span>
                     </div>
                     <div class="lot-item__min-cost">
-                        Мин. ставка <span><?= price_format($lot['bid_step']); ?></span>
+                        Мин. ставка <span><?= htmlspecialchars(price_format($lot['bid_step'])); ?></span>
                     </div>
                 </div>
                 <!-- Поле ставки не отобразится, если пользователь не залогинен -->
@@ -43,7 +43,7 @@
                 <form class="lot-item__form" action="lot.php?id=<?= $lot['id']; ?>" method="post" autocomplete="off">
                     <p class="lot-item__form-item form__item <?php if (count($errors)) : ?> form__item--invalid <?php endif; ?>">
                         <label for="cost">Ваша ставка</label>
-                        <input id="cost" type="text" name="cost" placeholder="<?= price_format($lot['bid_step']); ?>">
+                        <input id="cost" type="text" name="cost" placeholder="<?= htmlspecialchars(price_format($lot['bid_step'])); ?>">
                         <span class="form__error"><?= $errors['cost'] ?? ""; ?></span>
                     </p>
                     <button type="submit" class="button">Сделать ставку</button>
@@ -56,9 +56,9 @@
                 <table class="history__list">
                     <?php foreach ($bids as $key => $value) : ?>
                     <tr class="history__item">
-                        <td class="history__name"><?= $value['name'];?></td>
-                        <td class="history__price"><?= price_format($value['sum_price']); ?></td>
-                        <td class="history__time"><?= $value['bid_date'];?></td>
+                        <td class="history__name"><?= htmlspecialchars($value['name']);?></td>
+                        <td class="history__price"><?= htmlspecialchars(price_format($value['sum_price'])); ?></td>
+                        <td class="history__time"><?= htmlspecialchars($value['bid_date']);?></td>
                     </tr>
                     <?php endforeach; ?>
                 </table>

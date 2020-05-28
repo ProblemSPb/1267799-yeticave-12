@@ -1,6 +1,6 @@
 <div class="container">
     <section class="lots">
-    <h2>Все лоты в категории <span>«<?= $category;?>»</span></h2>
+    <h2>Все лоты в категории <span>«<?= htmlspecialchars($category);?>»</span></h2>
 
 
         <ul class="lots__list">
@@ -16,11 +16,11 @@
                         <div class="lot__state">
                             <div class="lot__rate">
                                 <span class="lot__amount">Стартовая цена</span>
-                                <span class="lot__cost"><?= price_format($value['price']); ?></span>
+                                <span class="lot__cost"><?= htmlspecialchars(price_format($value['price'])); ?></span>
                             </div>
                             <!-- Вызов функции по расчету, сколько часов и минут до конца аукциона-->
                             <?php
-                            $auc_end_hr = auction_end($value['expire']);
+                            $auc_end_hr = auction_end(htmlspecialchars($value['expire']));
 
                             // если осталось меньше часа, то будет выделено красным
                             // добавление блоку класса timer--finishing

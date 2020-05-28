@@ -23,12 +23,12 @@
                     <img src="<?= strip_tags($value['url']); ?>" width="350" height="260" alt="">
                 </div>
                 <div class="lot__info">
-                    <span class="lot__category"><?= $value['category']; ?></span>
+                    <span class="lot__category"><?= strip_tags($value['category']); ?></span>
                     <h3 class="lot__title"><a class="text-link" href="lot.php?id=<?=$value['id']?>"><?= strip_tags($value['name']); ?></a></h3>
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount">Стартовая цена</span>
-                            <span class="lot__cost"><?= price_format($value['price']); ?></span>
+                            <span class="lot__cost"><?= htmlspecialchars(price_format($value['price'])); ?></span>
                         </div>
                         <!-- Вызов функции по расчету, сколько часов и минут до конца аукциона-->
                           <?php 

@@ -24,14 +24,24 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0) {
     $id = intval($_GET['id']);
 
     // данные по лоту 
-    $sql_format = "SELECT lot.*, category.name as 'category name' FROM lot  INNER JOIN category on lot.categoryID = category.ID WHERE lot.id = %d";
-    $sql_lot = sprintf($sql_format, $id);
-    $lot_data = sql_query_result($con, $sql_lot);
+    $stmt = $con->prepare("SELECT lot.*, category.name as 'category name' FROM lot  INNER JOIN category on lot.categoryID = category.ID WHERE lot.id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
 
-    // данные по ставкам
-    $sql_bids_format = "SELECT bid.*, user.name FROM bid LEFT JOIN user on bid.userID = user.id WHERE bid.lotID = %d ORDER BY bid.bid_date DESC";
-    $sql_bids = sprintf($sql_bids_format, $id);
-    $bids_data = sql_query_result($con, $sql_bids);
+    $result = $stmt->get_result();
+    $all_rows = $result->fetch_all(MYSQLI_ASSOC);
+    $lot_data = $all_rows;
+    $stmt->close();
+
+    // данные по ставкам 
+    $stmt = $con->prepare("SELECT bid.*, user.name FROM bid LEFT JOIN user on bid.userID = user.id WHERE bid.lotID = ? ORDER BY bid.bid_date DESC");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $all_rows = $result->fetch_all(MYSQLI_ASSOC);
+    $bids_data = $all_rows;
+    $stmt->close();
 
     // если существует -> показать лот
     // если нет -> 404
@@ -42,13 +52,11 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0) {
         $sql_last_bid = sprintf($sql_last_bid_format, $id);
         $last_bid_result = sql_query_result($con, $sql_last_bid);
 
+        $last_bid = $lot_data[0]['start_price'];
         $last_bid_user =  0;
 
-        if (empty($last_bid_result)) {
-            $last_bid = $lot_data[0]['start_price'];
-        } else {
+        if (!empty($last_bid_result)) {
             $last_bid = $last_bid_result[0]['sum_price'];
-
             // получение ID пользователя, который сделал последнюю ставку на текущий момент
             $last_bid_user =  $last_bid_result[0]['userID'];
         }

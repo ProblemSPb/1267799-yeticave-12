@@ -14,14 +14,14 @@
             <div class="lot-item__state">
                 
                 <!-- Вызов функции по расчету, сколько часов и минут до конца аукциона-->
-                <?php 
+                <?php
                 $auc_end_hr = auction_end(strip_tags($lot['end_date']));
                 
                 // если осталось меньше часа, то будет выделено красным
                 // добавление блоку класса timer--finishing
                 $timer_finishing = "";
-                if($auc_end_hr[0] < 1) {
-                $timer_finishing = "timer--finishing";
+                if ($auc_end_hr[0] < 1) {
+                    $timer_finishing = "timer--finishing";
                 }
                 ?>
             <div class="lot-item__timer timer <?= $timer_finishing; ?>">

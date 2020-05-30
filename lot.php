@@ -20,10 +20,9 @@ $title = '404 Страница не найдена';
 
 //проверка параметра из строки запроса
 if (isset($_GET['id']) && intval($_GET['id']) > 0) {
-
     $id = intval($_GET['id']);
 
-    // данные по лоту 
+    // данные по лоту
     $stmt = $con->prepare("SELECT lot.*, category.name as 'category name' FROM lot  INNER JOIN category on lot.categoryID = category.ID WHERE lot.id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -33,7 +32,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0) {
     $lot_data = $all_rows;
     $stmt->close();
 
-    // данные по ставкам 
+    // данные по ставкам
     $stmt = $con->prepare("SELECT bid.*, user.name FROM bid LEFT JOIN user on bid.userID = user.id WHERE bid.lotID = ? ORDER BY bid.bid_date DESC");
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -75,7 +74,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0) {
                 // посчитать общую стоимость вмместе с новой ставкой
                 $sum_price = $_POST['cost'] + $last_bid;
 
-                //запись данных из формы в БД -> таблица bid 
+                //запись данных из формы в БД -> таблица bid
                 $stmt = $con->prepare("INSERT INTO bid (bid_date, sum_price, userID, lotID) VALUES (NOW(), ?, ?, ?)");
                 $stmt->bind_param("iii", $sum_price, $_SESSION['user']['user_id'], $id);
                 $stmt_result = $stmt->execute();

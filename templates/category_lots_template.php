@@ -30,7 +30,7 @@
                             }
                             ?>
                             <div class="lot__timer timer <?= $timer_finishing; ?>">
-                                <?php echo ($auc_end_hr[0] . ":" . $auc_end_hr[1]); ?>
+                                <?php echo($auc_end_hr[0] . ":" . $auc_end_hr[1]); ?>
                             </div>
                         </div>
                     </div>

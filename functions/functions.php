@@ -3,7 +3,7 @@
 /**
  * Расчет времени до конца аукциона
  * @param $auction_end_date Дата окончания аукциона
- * 
+ *
  * @return array Первый индекс - оставшееся количество часов, второй - минут
  */
 function auction_end($auction_end_date)
@@ -19,7 +19,7 @@ function auction_end($auction_end_date)
  * Подключает шаблон, передает туда данные и возвращает итоговый HTML контент
  * @param string $file_name Путь к файлу шаблона относительно папки templates
  * @param array $data Ассоциативный массив с данными для шаблона
- * 
+ *
  * @return string Итоговый HTML
  */
 function include_template($file_name, $data = array())
@@ -42,7 +42,7 @@ function include_template($file_name, $data = array())
 /**
  * Функция форматирования цены
  * @param $num Число для форматирования
- * 
+ *
  * @return string Возвращает округленное число с символом рубля
  */
 function price_format($num)
@@ -59,16 +59,15 @@ function price_format($num)
 
 /**
  * Функция назначения html класса rates__timer на странице my_bets
- * 
+ *
  * @param int $hr Количество оставшихся часов до конца аукциона
  * @param $winnerID ID победителя
  * @param int $userID ID залогиненного юзера
- * 
+ *
  * @return string Значение класса для html тэга, который использован в темплейте
  */
 function trClassRatesTimer(int $hr, $winnerID, int $userID)
 {
-
     $tr_class_rates_timer = "";
 
     if ($hr < 0 && (int)$winnerID === (int)$userID) {
@@ -85,7 +84,7 @@ function trClassRatesTimer(int $hr, $winnerID, int $userID)
  * используется в генерации тега <p> с контактными данными в списке ставок
  * @param $winnerID ID победителя
  * @param int $userID ID залогиненного юзера
- * 
+ *
  * @return bool Если залогиненный юзер и победитель ставки совпадает, вернет true.
  */
 function isWinner($winnerID, int $userID)
@@ -104,12 +103,11 @@ function isWinner($winnerID, int $userID)
  * @param int $hr Количество оставшихся часов до конца аукциона
  * @param $winnerID ID победителя
  * @param int $userID ID залогиненного юзера
- * 
+ *
  * @return string  Значение класса для html тэга, который использован в темплейте
  */
 function tdClassTimer(int $hr, $winnerID, int $userID)
 {
-
     $class_timer = "";
 
     if ((int)$hr === 0) {
@@ -133,12 +131,11 @@ function tdClassTimer(int $hr, $winnerID, int $userID)
  * @param int $min Количество оставшихся минут до конца аукциона
  * @param $winnerID  ID победителя
  * @param int $userID ID залогиненного юзера
- * 
+ *
  * @return string Возвращает строку Выиграла ставка, проиграла или количество часов и минут до окончания
  */
 function asignPastBidValue(int $hr, int $min, $winnerID, int $userID)
 {
-
     $value = "$hr : $min";
 
     if ($hr < 0 && (int)$winnerID !== (int)$userID) {
@@ -188,7 +185,7 @@ function get_noun_plural_form(int $number, string $one, string $two, string $man
 /**
  * Сравнение даты ставки с сегодняшней
  * @param $date Дата окончания аукциона
- * 
+ *
  * @return string Строку, сколько времени назад была сделана ставка
  */
 function compareDates($date)
@@ -221,7 +218,6 @@ function compareDates($date)
 
         // если ставка сделана меньше часа назад
         if ((int)$hr_bid === (int)$hr_today) {
-
             $min_diff = $min_today - $min_bid;
 
             // округляем нулевое значение до единицы

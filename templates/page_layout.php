@@ -51,7 +51,7 @@
             <nav class="nav">
                 <ul class="nav__list container">
 
-                    <?php foreach($categories as $category) : ?>
+                    <?php foreach ($categories as $category) : ?>
                         <li class="nav__item">
                         <a href="all_lots.php?category=<?= $category['id'];?>"><?= strip_tags($category['name']); ?></a>
                     </li>
@@ -70,7 +70,7 @@
         <nav class="nav">
             <ul class="nav__list container">
 
-                <?php foreach($categories as $category) :?>
+                <?php foreach ($categories as $category) :?>
                     <li class="nav__item">
                     <a href="all_lots.php?category=<?= $category['id'];?>"><?= strip_tags($category['name']); ?></a>
                 <?php endforeach; ?>

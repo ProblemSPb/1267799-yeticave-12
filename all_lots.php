@@ -21,7 +21,6 @@ $content = include_template('not_found_category.php');
 
 // если отправлен запрос на лоты из выбранной категории
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
-
     $categoryID = intval($_GET['category']);
 
     // извлекаем из URL текущую страницу
@@ -105,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     }
 }
 
-// подключение лейаута и контента 
+// подключение лейаута и контента
 $layout = include_template(
     'page_layout.php',
     [

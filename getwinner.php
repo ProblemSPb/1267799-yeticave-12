@@ -14,7 +14,6 @@ $lots_wo_winner = sql_query_result($con, $sql_lots_wo_winner);
 
 // записываем авторов последних ставок как победителей в таблицу lot
 foreach ($lots_wo_winner as $key => $value) {
-
     $update_winner = mysqli_query($con, "UPDATE lot SET winnerID = " . $value['winner_id'] . " WHERE id = " . $value['lot_id']);
 
     // если запись победителей прошла успешно, отправляем имейлы

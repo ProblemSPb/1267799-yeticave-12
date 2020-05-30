@@ -10,7 +10,7 @@ $user_name = "";
 // получение категорий из БД
 $sql_category = "SELECT id, name, code_name FROM category";
 $categories = sql_query_result($con, $sql_category);
-$content = include_template('403.php'); 
+$content = include_template('403.php');
 
 $errors = [];
 
@@ -66,7 +66,6 @@ if (isset($_SESSION['user'])) {
 
             // загрузка файлa
             if (isset($_FILES['lot_img'])) {
-
                 $pathInfo = pathinfo($_FILES['lot_img']['name']);
                 $file_name = translate($pathInfo['filename']) . "." . $pathInfo['extension'];
                 $file_path = __DIR__ . '/uploads/';
@@ -75,7 +74,7 @@ if (isset($_SESSION['user'])) {
                 move_uploaded_file($_FILES['lot_img']['tmp_name'], $file_path . $file_name);
             }
 
-            //запись данных из формы в БД -> таблица lot 
+            //запись данных из формы в БД -> таблица lot
             $stmt = $con->prepare("INSERT INTO lot (create_date, name, description, img_link, start_price, end_date, bid_step, userID, categoryID) VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->bind_param("sssisiii", $_POST['name'], $_POST['description'], $file_url, $_POST['start_price'], $_POST['end_date'], $_POST['bid_step'], $_SESSION['user']['user_id'], $_POST['category']);
             $stmt_result = $stmt->execute();
@@ -102,7 +101,7 @@ if (isset($_SESSION['user'])) {
     );
 }
 
-// подключение лейаута и контента 
+// подключение лейаута и контента
 $layout = include_template(
     'page_layout.php',
     [

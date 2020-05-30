@@ -26,11 +26,11 @@
               // добавление блоку класса timer--finishing
               $timer_finishing = "";
               if ($auc_end_hr[0] < 1) {
-                $timer_finishing = "timer--finishing";
+                  $timer_finishing = "timer--finishing";
               }
               ?>
               <div class="lot__timer timer <?= $timer_finishing; ?>">
-                <?php echo ($auc_end_hr[0] . ":" . $auc_end_hr[1]); ?>
+                <?php echo($auc_end_hr[0] . ":" . $auc_end_hr[1]); ?>
               </div>
             </div>
           </div>
@@ -49,19 +49,19 @@
 
     <!-- следующие три блока показывают ссылки на следующие страницы, если есть товары для отображения -->
     <!-- если товаров в очереди нет, то ссылки скрываются  -->
-    <?php if(($page) < $pages_total) : ?>
+    <?php if (($page) < $pages_total) : ?>
     <li class="pagination-item"><a href="search.php?search=<?= $search; ?>&page=<?= ($page + 1); ?>"><?= $page + 1; ?></a></li>
     <?php else : ?>
     <li class="pagination-item"><a></a></li>
     <?php endif; ?>
 
-    <?php if(($page+1) < $pages_total) : ?>
+    <?php if (($page+1) < $pages_total) : ?>
     <li class="pagination-item"><a href="search.php?search=<?= $search; ?>&page=<?= ($page + 2); ?>"><?= $page + 2; ?></a></li>
     <?php else : ?>
     <li class="pagination-item"><a></a></li>
     <?php endif; ?>
 
-    <?php if(($page+2) < $pages_total) : ?>
+    <?php if (($page+2) < $pages_total) : ?>
     <li class="pagination-item"><a href="search.php?search=<?= $search; ?>&page=<?= ($page + 3); ?>"><?= $page + 3; ?></a></li>
     <?php else : ?>
     <li class="pagination-item"><a></a></li>

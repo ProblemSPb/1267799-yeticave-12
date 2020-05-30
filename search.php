@@ -23,7 +23,6 @@ $content = include_template('not_found.php');
 
 // если отправлен запрос на поиск
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
-
     $search = trim($_GET['search']);
 
     // извлекаем из URL текущую страницу
@@ -98,7 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     }
 }
 
-// подключение лейаута и контента 
+// подключение лейаута и контента
 $layout = include_template(
     'page_layout.php',
     [

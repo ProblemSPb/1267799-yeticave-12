@@ -71,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $offset = (intval($page) - 1) * $limit;
 
         // если что-то найдено
-        if (!$count === 0) {
+        if ($count !== 0) {
 
             // получение соответствующих лотов из БД
             $stmt = $con->prepare("SELECT lot.id, lot.name, lot.start_price as price, lot.img_link as url, lot.end_date as expire, category.name as category

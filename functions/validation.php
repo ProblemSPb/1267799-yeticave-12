@@ -1,100 +1,146 @@
 <?php
 
-
-//сохранение значений полей
-function getPostValue($name) {
+/**
+ * Сохраняет значений полей POST
+ * @param $name Значение, необходимое в массиве POST
+ *
+ * @return string Возвращает значение, если оно есть
+ */
+function getPostValue($name)
+{
     return $_POST[$name] ?? "";
 }
 
-function getGetValue($name) {
+/**
+ * Сохраняет значений полей GET
+ * @param $name Значение, необходимое в массиве GET
+ *
+ * @return string Возвращает значение, если оно есть
+ */
+function getGetValue($name)
+{
     return $_GET[$name] ?? "";
 }
 
 /////////////////////////
 // ФОРМА ДОБАВЛЕНИЯ ЛОТА
-//////////////////////// 
+////////////////////////
 
-function validateNotEmpty($field) {
-
-    if(empty($field)){
-        return 'Это поле должно быть заполнено';
+/**
+ * Проверяет, если поле пустое
+ * @param $field Поле для проверки
+ *
+ * @return string Информацию об ошибке или пустую строку
+ */
+function validateNotEmpty($field)
+{
+    $validation = "";
+    if (empty($field)) {
+        $validation = 'Это поле должно быть заполнено';
     }
 
+    return $validation;
 }
 
-// проверка категории
-function validateCategory($category) {
+/**
+ * Проверяет, если поле Категория пустое
+ * @param $category Поле для проверки
+ *
+ * @return string Информацию об ошибке или пустую строку
+ */
+function validateCategory($category)
+{
+    $validation = "";
 
     if ($category <= 0) {
-        return "Категория не выбрана";
+        $validation = "Категория не выбрана";
     }
+    return $validation;
 }
 
-// проверка длины вводимого значения
-function validateText($name, $min, $max) {
-
+/**
+ * Проверяет, если введенное значение в поле меньше минимального количества
+ * @param $field Поле для проверки
+ * @param int $min Минимальная длина введенного в поле значения
+ * @param int $max Максимальная длина введенного в поле значения
+ *
+ * @return string Информацию об ошибке или пустую строку
+ */
+function validateText($name, int $min, int $max)
+{
     validateNotEmpty($name);
     
-    if(mb_strlen($name)<$min) {
-        return  "Это поле должно быть не меньше " . $min . " символов";
-    } elseif(mb_strlen($name) > $max) {
-        return "Это поле должно быть меньше " . $max . " символов";
-    }
+    $validation = "";
 
+    if (mb_strlen($name)<$min) {
+        $validation =  "Это поле должно быть не меньше " . $min . " символов";
+    } elseif (mb_strlen($name) > $max) {
+        $validation = "Это поле должно быть меньше " . $max . " символов";
+    }
+    return $validation;
 }
 
-// проверка формата цены и шага ставки
-function validateNum($num) {
-
+/**
+ * Проверяет форматы цены и шага ставки: если введенное значение в поле - целое число и > 0
+ * @param $num Число для проверки
+ *
+ * @return string Информацию об ошибке или пустую строку
+ */
+function validateNum($num)
+{
     validateNotEmpty($num);
 
+    $validation = "";
+
     // целое число
-    if(!(ctype_digit($num))) {
-        return "Введите целое число больше 0";
+    if (!(ctype_digit($num))) {
+        $validation = "Введите целое число больше 0";
     }
 
-    if($num <= 0) {
-        return "Значение должно быть больше нуля";
+    if ($num <= 0) {
+        $validation = "Значение должно быть больше нуля";
     }
 
+    return $validation;
 }
 
-// проверка сделанной ставки
-function validateBid($num, $minBid) {
-
-    if(!(ctype_digit($num))) {
-        return "Введите целое число больше 0";
-    }
-
-    if($num < $minBid) {
-        return "Ставка должна быть не меньше минимальной";
-    }
-}
-
-// проверка картинки
-function validateImg() {
+/**
+ * Проверяет формат и размер загружаемой картинки
+ *
+ * @return string Информацию об ошибке или пустую строку
+ */
+function validateImg()
+{
+    $validation = "";
 
     // проверка на заполнение
-    if(empty($_FILES['lot_img']['name'])) {
-        return "Загрузите картинку товара";
+    if (empty($_FILES['lot_img']['name'])) {
+        $validation = "Загрузите картинку товара";
     } else {
         //формат
         $allowedTypes = array(IMAGETYPE_PNG, IMAGETYPE_JPEG);
         $detectedType = exif_imagetype($_FILES['lot_img']['tmp_name']);
 
-        if(!in_array($detectedType, $allowedTypes)){
-            return "Загрузите картинку в формате jpg/jpeg или png";
+        if (!in_array($detectedType, $allowedTypes)) {
+            $validation = "Загрузите картинку в формате jpg/jpeg или png";
         }
 
         $file_size = $_FILES['lot_img']['size'];
-        if($file_size > 5000000) {
-            return "Файл не должен быть больше 5мб";
+        if ($file_size > 5000000) {
+            $validation = "Файл не должен быть больше 5мб";
         }
     }
+
+    return $validation;
 }
 
-// конвертация кириллицы в латиницу в названии файла
-function translate($string) {
+/**
+ * Конвертирует кириллицу в латиницу в названии файла
+ *
+ * @return string Возвращает название файла в латинице
+ */
+function translate($string)
+{
     // Замена символов
     $replace = [
       'а' => 'a',   'б' => 'b',
@@ -122,56 +168,107 @@ function translate($string) {
     $string = strtr($string, $replace);
     // Заменяем все лишние символы и возвращаем
     return preg_replace('~[^a-z\-]~', null, $string);
-
 }
-// проверка даты
-function is_date_valid(string $date) {
 
+/**
+ * Проверяет формат даты - окончания аукциона
+ * @param string $date Дата для проверки
+ *
+ * @return string Информацию об ошибке или пустую строку
+ */
+function is_date_valid(string $date)
+{
     validateNotEmpty($date);
+
+    $validation = "";
 
     $format_to_check = 'Y-m-d';
     $dateTimeObj = date_create_from_format($format_to_check, $date);
 
     if ($dateTimeObj !== false && array_sum(date_get_last_errors()) === 0) {
         $expect_auc_end = (strtotime($date) - strtotime('now')) / 3600;
-        if($expect_auc_end <= 24) {
-            return "Окончание аукциона должно быть не раньше 24 часов";
+        if ($expect_auc_end <= 24) {
+            $validation = "Окончание аукциона должно быть не раньше 24 часов";
         }
+    } else {
+        $validation = "Укажите дажу окончания аукциона";
     }
-    else {
-        return "Укажите дажу окончания аукциона";
+
+    return $validation;
+}
+
+/////////////////////////
+// ФОРМА СТАВКИ В ЛОТЕ
+////////////////////////
+
+/**
+ * Проверяет формат ставки в лоте: если введенное значение в поле - целое число и > 0
+ * @param $num Число для проверки
+ * @param $minBid Минимальное значение ставки от продавца
+ *
+ * @return string Информацию об ошибке или пустую строку
+ */
+function validateBid($num, $minBid)
+{
+    $validation = "";
+
+    if (!(ctype_digit($num))) {
+        $validation = "Введите целое число больше 0";
     }
+
+    if ($num < $minBid) {
+        $validation = "Ставка должна быть не меньше минимальной";
+    }
+
+    return $validation;
 }
 
 /////////////////////////
 // ФОРМА РЕГИСТРАЦИИ
 ////////////////////////
 
-// валидация email
+/**
+ * Проверяет формат введенного email
+ * @param $email Введенный пользователем email
+ *
+ * @return string Информацию об ошибке или пустую строку
+ */
+function validateEmail($email)
+{
+    $validation = "";
 
-function validateEmail($email) {
-
-    if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        return "Введите корректный email";
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $validation = "Введите корректный email";
     }
+
+    return $validation;
 }
 
-// валидация пароля
-function validatePass($pass) {
-
+/**
+ * Проверяет формат введенного пароля при регистрации
+ * Должен содержать цифры, строчные и заглавные буквы
+ * @param $pass Введенный пользователем пароль
+ *
+ * @return string Информацию об ошибке или пустую строку
+ */
+function validatePass($pass)
+{
     validateNotEmpty($pass);
 
-    // добавить валидацию 
-    if(strlen($pass) < 6) {
-        return "Пароль должен быть не менее 6 символов и содержать цифры, заглавные и строчные буквы";
+    $validation = "";
+
+    // добавить валидацию
+    if (strlen($pass) < 6) {
+        $validation = "Пароль должен быть не менее 6 символов и содержать цифры, заглавные и строчные буквы";
     }
 
-    if(strlen($pass) > 40 ) {
-        return "Пароль не должен быть больше 40 символов и содержать цифры, заглавные и строчные буквы";
+    if (strlen($pass) > 40) {
+        $validation = "Пароль не должен быть больше 40 символов и содержать цифры, заглавные и строчные буквы";
     }
 
-    if(!((preg_match('/[A-Z]/', $pass)) && (preg_match('/[a-z]/', $pass)) && preg_match('/[0-9]/', $pass))) {
-        return "Пароль должен содержать цифры, заглавные и строчные буквы";
+    if (!((preg_match('/[A-Z]/', $pass)) && (preg_match('/[a-z]/', $pass)) && preg_match('/[0-9]/', $pass))) {
+        $validation = "Пароль должен содержать цифры, заглавные и строчные буквы";
     }
+
+    return $validation;
 }
-

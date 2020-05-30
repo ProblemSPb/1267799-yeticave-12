@@ -1,6 +1,11 @@
 <?php
 
-// расчет времени до конца аукциона
+/**
+ * Расчет времени до конца аукциона
+ * @param $auction_end_date Дата окончания аукциона
+ *
+ * @return array Первый индекс - оставшееся количество часов, второй - минут
+ */
 function auction_end($auction_end_date)
 {
     $time_diff = strtotime($auction_end_date) - time();
@@ -11,7 +16,11 @@ function auction_end($auction_end_date)
 };
 
 /**
- * Функция подключения темплейтов
+ * Подключает шаблон, передает туда данные и возвращает итоговый HTML контент
+ * @param string $file_name Путь к файлу шаблона относительно папки templates
+ * @param array $data Ассоциативный массив с данными для шаблона
+ *
+ * @return string Итоговый HTML
  */
 function include_template($file_name, $data = array())
 {
@@ -33,7 +42,7 @@ function include_template($file_name, $data = array())
 /**
  * Функция форматирования цены
  * @param $num Число для форматирования
- * 
+ *
  * @return string Возвращает округленное число с символом рубля
  */
 function price_format($num)
@@ -49,71 +58,90 @@ function price_format($num)
 
 
 /**
- *  Функция назначения класса rates__timer на странице my_bets
+ * Функция назначения html класса rates__timer на странице my_bets
+ *
+ * @param int $hr Количество оставшихся часов до конца аукциона
+ * @param $winnerID ID победителя
+ * @param int $userID ID залогиненного юзера
+ *
+ * @return string Значение класса для html тэга, который использован в темплейте
  */
 function trClassRatesTimer(int $hr, $winnerID, int $userID)
 {
+    $tr_class_rates_timer = "";
 
-    if ($hr < 0 && $winnerID == $userID) {
+    if ($hr < 0 && (int)$winnerID === (int)$userID) {
         $tr_class_rates_timer = "rates__item--win";
-    } elseif ($hr < 0 && $winnerID != $userID) {
+    } elseif ($hr < 0 && (int)$winnerID !== (int)$userID) {
         $tr_class_rates_timer = "rates__item--end";
-    } else {
-        $tr_class_rates_timer = "";
     }
 
     return $tr_class_rates_timer;
 }
 
 /**
- *  Функция возвращает true если ставка пользователя победила
- *  используется в генерации тега <p> с контактными данными в списке ставок
+ * Функция возвращает true если ставка пользователя победила
+ * используется в генерации тега <p> с контактными данными в списке ставок
+ * @param $winnerID ID победителя
+ * @param int $userID ID залогиненного юзера
+ *
+ * @return bool Если залогиненный юзер и победитель ставки совпадает, вернет true.
  */
 function isWinner($winnerID, int $userID)
 {
+    $isWinner = false;
 
-    if ($winnerID == $userID) {
-        return true;
+    if ((int)$winnerID === (int)$userID) {
+        $isWinner = true;
     }
+
+    return $isWinner;
 }
 
 /**
- *  Функция назначения класса timer на странице my_bets
+ * Функция асайнит значения html классу timer на странице my_bets
+ * @param int $hr Количество оставшихся часов до конца аукциона
+ * @param $winnerID ID победителя
+ * @param int $userID ID залогиненного юзера
+ *
+ * @return string  Значение класса для html тэга, который использован в темплейте
  */
 function tdClassTimer(int $hr, $winnerID, int $userID)
 {
+    $class_timer = "";
 
-    if ($hr == 0) {
+    if ((int)$hr === 0) {
         $class_timer = "timer--finishing";
-    } elseif ($hr < 0 && $winnerID != $userID) {
+    } elseif ($hr < 0 && (int)$winnerID !== (int)$userID) {
         $class_timer = "timer--end";
-    } elseif ($hr < 0 && $winnerID == $userID) {
+    } elseif ($hr < 0 && (int)$winnerID === (int)$userID) {
         $class_timer = "timer--win";
-    } else {
-        $class_timer = "";
     }
 
     return $class_timer;
 }
 
 /**
- *  Функция назначения value для статуса ставки на странице my_bets
- *  timer--end Торги окончены
- *  timer--win Ставка выиграла
- *  timer--finishing - указано время окончания и оно < 1 часа и время окончания выделено красным 
- *  время окончания > 1 часа без доп класса серым цветом
+ * Функция назначения value для статуса ставки на странице my_bets
+ * Значения:
+ * Торги окончены
+ * Ставка выиграоа
+ * Количество часов и минут до окончания
+ * @param int $hr Количество оставшихся часов до конца аукциона
+ * @param int $min Количество оставшихся минут до конца аукциона
+ * @param $winnerID  ID победителя
+ * @param int $userID ID залогиненного юзера
+ *
+ * @return string Возвращает строку Выиграла ставка, проиграла или количество часов и минут до окончания
  */
 function asignPastBidValue(int $hr, int $min, $winnerID, int $userID)
 {
+    $value = "$hr : $min";
 
-    if ($hr == 0) {
-        $value = "$hr : $min";
-    } elseif ($hr < 0 && $winnerID != $userID) {
+    if ($hr < 0 && (int)$winnerID !== (int)$userID) {
         $value = "Торги окончены";
-    } elseif ($hr < 0 && $winnerID == $userID) {
+    } elseif ($hr < 0 && (int)$winnerID === (int)$userID) {
         $value = "Ставка выиграла";
-    } else {
-        $value = "$hr : $min";
     }
 
     return $value;
@@ -155,8 +183,10 @@ function get_noun_plural_form(int $number, string $one, string $two, string $man
 }
 
 /**
- *  Сравнение даты ставки с сегодняшней
- * 
+ * Сравнение даты ставки с сегодняшней
+ * @param $date Дата окончания аукциона
+ *
+ * @return string Строку, сколько времени назад была сделана ставка
  */
 function compareDates($date)
 {
@@ -176,40 +206,36 @@ function compareDates($date)
     $hr_bid = date_format($bid_date, 'H');
     $min_bid = date_format($bid_date, 'i');
 
+    // дата и время сделанной ставки
+    $output_date = $bid_date_format . " в " . $hr_bid . ":" . $min_bid;
+
     // сравнение дат
-    if ($bid_date_format == $today_format) {
-        
+    if ($bid_date_format === $today_format) {
+
         // получить часы и минуты для сегодняшней даты
         $hr_today = date_format($today, 'H');
         $min_today = date_format($today, 'i');
 
         // если ставка сделана меньше часа назад
-        if($hr_bid == $hr_today) {
-
+        if ((int)$hr_bid === (int)$hr_today) {
             $min_diff = $min_today - $min_bid;
 
-            if($min_diff == 0) {
+            // округляем нулевое значение до единицы
+            if ((int)$min_diff === 0) {
                 $min_diff = 1;
             }
 
-            $min_plual = get_noun_plural_form($min_diff, "минуту", "минуты", "минут");
-            $output_date = $min_diff . " ".$min_plual. " назад";
+            $min_plural = get_noun_plural_form($min_diff, "минуту", "минуты", "минут");
+            $output_date = $min_diff . " " . $min_plural . " назад";
         } else {
-
             $hr_diff = $hr_today - $hr_bid;
-            $hr_plual = get_noun_plural_form($hr_diff, "час", "часа", "часов");
-            $output_date = $hr_diff . " ".$hr_plual. " назад";
+            $min_plural = get_noun_plural_form($hr_diff, "час", "часа", "часов");
+            $output_date = $hr_diff . " " . $min_plural . " назад";
         }
-        
-        return $output_date;
-
-    } elseif ($bid_date_format == $yesterday_format) { // логика для вчерашних ставок
-        $output_date = "Вчера, в " . $hr_bid .":". $min_bid;
-        return $output_date;
-
-    } else { // для ставок, которые сделаны позавчера и раньше
-        $output_date = $bid_date_format . " в " . $hr_bid .":". $min_bid;
-        return $output_date;
+        // логика для вчерашних ставок
+    } elseif ($bid_date_format === $yesterday_format) {
+        $output_date = "Вчера, в " . $hr_bid . ":" . $min_bid;
     }
-}
 
+    return $output_date;
+}

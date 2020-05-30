@@ -6,7 +6,7 @@
 
       <?php
       // получение часов и минут до конца аукциона
-      $auc_end_hr = auction_end($value['expire']);
+      $auc_end_hr = auction_end(strip_tags($value['expire']));
       $hr = $auc_end_hr[0];
       $min = $auc_end_hr[1];
 
@@ -44,7 +44,7 @@
           <?= htmlspecialchars(price_format($value['sum_price'])); ?>
         </td>
         <td class="rates__time">
-          <?= compareDates($value['bid_date']); ?>
+          <?= compareDates(strip_tags($value['bid_date'])); ?>
         </td>
       </tr>
     <?php endforeach; ?>

@@ -74,7 +74,7 @@ $content = include_template(
     ]
 );
 
-// подключение лейаута и контента 
+// подключение лейаута и контента
 $layout = include_template(
     'page_layout.php',
     [

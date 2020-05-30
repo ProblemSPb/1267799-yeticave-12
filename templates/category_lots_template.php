@@ -11,7 +11,7 @@
                         <img src="<?= strip_tags($value['url']); ?>" width="350" height="260" alt="">
                     </div>
                     <div class="lot__info">
-                        <span class="lot__category"><?= $value['category']; ?></span>
+                        <span class="lot__category"><?= htmlspecialchars($value['category']); ?></span>
                         <h3 class="lot__title"><a class="text-link" href="lot.php?id=<?= $value['id'] ?>"><?= strip_tags($value['name']); ?></a></h3>
                         <div class="lot__state">
                             <div class="lot__rate">
@@ -30,7 +30,7 @@
                             }
                             ?>
                             <div class="lot__timer timer <?= $timer_finishing; ?>">
-                                <?php echo ($auc_end_hr[0] . ":" . $auc_end_hr[1]); ?>
+                                <?php echo($auc_end_hr[0] . ":" . $auc_end_hr[1]); ?>
                             </div>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
 
         <!-- показывают ссылку НАЗАД, если есть товары на предыдущих страницах -->
         <!-- если товаров нет, то ссылка скрывается  -->
-        <li class="pagination-item pagination-item-prev"><a href="search.php?search=<?= $search; ?>&page=<?= ($page - 1); ?>"><?= ($page == 1) ? "" : "Назад"; ?></a></li>
+        <li class="pagination-item pagination-item-prev"><a href="search.php?search=<?= $search; ?>&page=<?= ($page - 1); ?>"><?= ($page === 1) ? "" : "Назад"; ?></a></li>
 
         <li class="pagination-item pagination-item-active"><a href="search.php?search=<?= $search; ?>&page=<?= ($page); ?>"><?= $page; ?></a></li>
 

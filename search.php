@@ -23,7 +23,6 @@ $content = include_template('not_found.php');
 
 // если отправлен запрос на поиск
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
-
     $search = trim($_GET['search']);
 
     // извлекаем из URL текущую страницу
@@ -65,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $offset = (intval($page) - 1) * $limit;
 
         // если ничего не найдено
-        if (!$count == 0) {
+        if ($count !== 0) {
 
             // получение соответствующих лотов из БД
             $stmt = $con->prepare("SELECT lot.id, lot.name, lot.start_price as price, lot.img_link as url, lot.end_date as expire, category.name as category
@@ -98,7 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     }
 }
 
-// подключение лейаута и контента 
+// подключение лейаута и контента
 $layout = include_template(
     'page_layout.php',
     [

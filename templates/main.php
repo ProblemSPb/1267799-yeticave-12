@@ -32,7 +32,7 @@
                         </div>
                         <!-- Вызов функции по расчету, сколько часов и минут до конца аукциона-->
                           <?php 
-                            $auc_end_hr = auction_end($value['expire']);
+                            $auc_end_hr = auction_end(strip_tags($value['expire']));
                             
                             // если осталось меньше часа, то будет выделено красным
                             // добавление блоку класса timer--finishing

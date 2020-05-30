@@ -1,5 +1,5 @@
 <section class="lot-item container">
-    <h2><?= $lot['name']; ?></h2>
+    <h2><?= htmlspecialchars($lot['name']); ?></h2>
     <div class="lot-item__content">
         <div class="lot-item__left">
             <div class="lot-item__image">
@@ -15,7 +15,7 @@
                 
                 <!-- Вызов функции по расчету, сколько часов и минут до конца аукциона-->
                 <?php 
-                $auc_end_hr = auction_end($lot['end_date']);
+                $auc_end_hr = auction_end(strip_tags($lot['end_date']));
                 
                 // если осталось меньше часа, то будет выделено красным
                 // добавление блоку класса timer--finishing
@@ -39,7 +39,7 @@
                 </div>
                 <!-- Поле ставки не отобразится, если пользователь не залогинен -->
                 <!-- А также, если это лот пользователя, если время аукциона истекло, если последняя ставка принадлежит этому пользователю -->
-                <?php if (isset($_SESSION['user']) && ($_SESSION['user']['user_id'] != $lot['userID']) && ($_SESSION['user']['user_id'] != $last_bid_user) && (strtotime('now')  < strtotime($lot['end_date']))) : ?>
+                <?php if (isset($_SESSION['user']) && ((int)$_SESSION['user']['user_id'] !== (int)$lot['userID']) && ((int)$_SESSION['user']['user_id'] !== (int)$last_bid_user) && (strtotime('now')  < strtotime($lot['end_date']))) : ?>
                 <form class="lot-item__form" action="lot.php?id=<?= $lot['id']; ?>" method="post" autocomplete="off">
                     <p class="lot-item__form-item form__item <?php if (count($errors)) : ?> form__item--invalid <?php endif; ?>">
                         <label for="cost">Ваша ставка</label>

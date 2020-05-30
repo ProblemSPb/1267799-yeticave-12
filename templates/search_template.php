@@ -20,7 +20,7 @@
               </div>
               <!-- Вызов функции по расчету, сколько часов и минут до конца аукциона-->
               <?php
-              $auc_end_hr = auction_end($value['expire']);
+              $auc_end_hr = auction_end(strip_tags($value['expire']));
 
               // если осталось меньше часа, то будет выделено красным
               // добавление блоку класса timer--finishing
@@ -43,7 +43,7 @@
 
     <!-- показывают ссылку НАЗАД, если есть товары на предыдущих страницах -->
     <!-- если товаров нет, то ссылка скрывается  -->
-    <li class="pagination-item pagination-item-prev"><a href="search.php?search=<?= $search; ?>&page=<?= ($page - 1); ?>"><?= ($page == 1) ? "" : "Назад" ; ?></a></li>
+    <li class="pagination-item pagination-item-prev"><a href="search.php?search=<?= $search; ?>&page=<?= ($page - 1); ?>"><?= ($page === 1) ? "" : "Назад" ; ?></a></li>
     
     <li class="pagination-item pagination-item-active"><a href="search.php?search=<?= $search; ?>&page=<?= ($page); ?>"><?= $page; ?></a></li>
 
